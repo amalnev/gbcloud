@@ -26,7 +26,7 @@ public class PingWorker extends Thread
             try
             {
                 Thread.sleep(PING_PERIOD);
-                if(!transportChannel.isConnected()) continue;
+                if (!transportChannel.isConnected()) continue;
                 final IClientAgent keepAliveAgent = CDI.current().select(KeepAliveClientAgent.class).get();
                 keepAliveAgent.setTransportChannel(transportChannel);
                 keepAliveAgent.setConversationManager(conversationManager);

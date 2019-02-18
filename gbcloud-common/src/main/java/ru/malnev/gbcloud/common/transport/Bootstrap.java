@@ -1,9 +1,5 @@
 package ru.malnev.gbcloud.common.transport;
 
-import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
-import ru.malnev.gbcloud.common.transport.Netty;
-import ru.malnev.gbcloud.common.transport.Nio;
-
 import javax.inject.Inject;
 
 public class Bootstrap

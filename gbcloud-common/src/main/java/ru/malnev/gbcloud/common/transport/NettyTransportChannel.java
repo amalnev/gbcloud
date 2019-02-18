@@ -1,9 +1,7 @@
 package ru.malnev.gbcloud.common.transport;
 
 import io.netty.channel.ChannelHandlerContext;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
