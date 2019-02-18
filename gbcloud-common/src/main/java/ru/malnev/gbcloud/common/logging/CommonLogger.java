@@ -37,16 +37,16 @@ public class CommonLogger
     private Object logMethod(final InvocationContext invocationContext)
     {
         final Class targetClass = invocationContext.getTarget().getClass();
-        if(ITransportChannel.class.isAssignableFrom(targetClass))
+        if (ITransportChannel.class.isAssignableFrom(targetClass))
         {
             final ITransportChannel transportChannel = (ITransportChannel) invocationContext.getTarget();
             String remoteAddress = "[unknown]";
-            if(transportChannel.isConnected())
+            if (transportChannel.isConnected())
             {
                 remoteAddress = transportChannel.getRemoteAddress();
             }
             final Method method = invocationContext.getMethod();
-            if(method.getName().equals("sendMessage"))
+            if (method.getName().equals("sendMessage"))
             {
                 final IMessage message = (IMessage) invocationContext.getParameters()[0];
                 final String messageType = message.getClass().getSimpleName();
@@ -59,7 +59,7 @@ public class CommonLogger
                         conversationId +
                         " is about to be sent.");
             }
-            else if(method.getName().equals("close"))
+            else if (method.getName().equals("close"))
             {
                 write("Connection to " + remoteAddress + " is about to close.");
             }

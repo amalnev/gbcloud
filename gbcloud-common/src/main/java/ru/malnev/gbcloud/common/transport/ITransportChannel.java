@@ -12,7 +12,14 @@ public interface ITransportChannel extends Closeable
     @NotNull
     IMessage readMessage() throws CorruptedDataReceived, RemoteEndGone;
 
-    void closeSilently();
+    default void closeSilently()
+    {
+        try
+        {
+            close();
+        }
+        catch (Exception e) {}
+    }
 
     String getRemoteAddress();
 

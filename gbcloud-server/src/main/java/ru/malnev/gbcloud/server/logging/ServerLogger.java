@@ -4,8 +4,6 @@ import lombok.SneakyThrows;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
 import ru.malnev.gbcloud.server.events.EClientConntected;
 import ru.malnev.gbcloud.server.events.EMessageReceived;
-import ru.malnev.gbcloud.server.handlers.HClientConnected;
-import ru.malnev.gbcloud.server.handlers.HMessageReceived;
 
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
@@ -19,13 +17,13 @@ public class ServerLogger extends CommonLogger
     {
         final Class targetClass = invocationContext.getTarget().getClass();
         final Method method = invocationContext.getMethod();
-        if(method.getName().equals("handleClientConnected"))
+        if (method.getName().equals("handleClientConnected"))
         {
             final EClientConntected event = (EClientConntected) invocationContext.getParameters()[0];
             final String remoteAddress = event.getClientContext().getTransportChannel().getRemoteAddress();
             write("Connection from " + remoteAddress + " accepted.");
         }
-        else if(method.getName().equals("handleMessageReceived"))
+        else if (method.getName().equals("handleMessageReceived"))
         {
             final EMessageReceived event = (EMessageReceived) invocationContext.getParameters()[0];
             final String remoteAddress = event.getClientContext().getTransportChannel().getRemoteAddress();

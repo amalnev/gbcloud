@@ -7,7 +7,7 @@ import ru.malnev.gbcloud.common.transport.ITransportChannel;
 
 public class KeepAliveClientAgent extends AbstractClientAgent
 {
-    private final static int TIMEOUT = 2000;
+    private final static int TIMEOUT = 20000;
 
     private long startTime;
 
@@ -26,7 +26,7 @@ public class KeepAliveClientAgent extends AbstractClientAgent
 
     @Override
     public synchronized void processMessage(final @NotNull IMessage message,
-                               final @NotNull ITransportChannel transportChannel)
+                                            final @NotNull ITransportChannel transportChannel)
     {
         final long delta = System.currentTimeMillis() - startTime;
         System.out.println("Response from " +

@@ -1,6 +1,8 @@
 package ru.malnev.gbcloud.common.transport;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
 import ru.malnev.gbcloud.common.messages.IMessage;
@@ -12,6 +14,7 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+@Nio
 @Interceptors(CommonLogger.class)
 public class NioTransportChannel implements ITransportChannel
 {
@@ -76,19 +79,6 @@ public class NioTransportChannel implements ITransportChannel
         }
 
         throw new CorruptedDataReceived();
-    }
-
-    @Override
-    public void closeSilently()
-    {
-        try
-        {
-            close();
-        }
-        catch (Exception e)
-        {
-
-        }
     }
 
     @Override

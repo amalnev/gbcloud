@@ -3,9 +3,7 @@ package ru.malnev.gbcloud.server.impl;
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.common.conversations.IConversationManager;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
-import ru.malnev.gbcloud.common.transport.ITransportChannel;
-import ru.malnev.gbcloud.common.transport.NioTransportChannel;
+import ru.malnev.gbcloud.common.transport.*;
 import ru.malnev.gbcloud.server.context.IClientContext;
 import ru.malnev.gbcloud.server.events.EClientConntected;
 import ru.malnev.gbcloud.server.events.EClientDisconnected;
@@ -24,6 +22,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.function.Consumer;
 
+@Nio
 @ApplicationScoped
 public class NioServer implements INetworkEndpoint
 {
@@ -68,7 +67,7 @@ public class NioServer implements INetworkEndpoint
         {
             selector.select();
             if (!selector.isOpen()) break;
-            for(final SelectionKey selectionKey : selector.selectedKeys())
+            for (final SelectionKey selectionKey : selector.selectedKeys())
             {
                 if (selectionKey.isAcceptable())
                 {
@@ -79,7 +78,7 @@ public class NioServer implements INetworkEndpoint
                         clientSocketChannel.configureBlocking(false);
                         final IClientContext clientContext = CDI.current().select(IClientContext.class).get();
                         clientContext.setConversationManager(CDI.current().select(IConversationManager.class).get());
-                        final NioTransportChannel transportChannel = CDI.current().select(NioTransportChannel.class).get();
+                        final NioTransportChannel transportChannel = CDI.current().select(NioTransportChannel.class, new NioLiteral()).get();
                         transportChannel.setSocketChannel(clientSocketChannel);
                         clientContext.setTransportChannel(transportChannel);
                         clientSocketChannel.register(selector, SelectionKey.OP_READ, clientContext);
@@ -87,6 +86,7 @@ public class NioServer implements INetworkEndpoint
                     }
                     catch (Exception e)
                     {
+                        e.printStackTrace();
                         closeSilently.accept(clientSocketChannel);
                     }
                 }
