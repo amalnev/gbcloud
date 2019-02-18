@@ -13,5 +13,5 @@ public class ClientContext implements IClientContext
 
     private volatile IConversationManager conversationManager;
 
-    private volatile boolean authenticated = true;
+    private volatile boolean authenticated;
 }

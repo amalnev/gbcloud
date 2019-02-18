@@ -1,6 +1,6 @@
 package ru.malnev.gbcloud.client;
 
-import ru.malnev.gbcloud.common.transport.Bootstrap;
+import ru.malnev.gbcloud.common.bootstrap.Bootstrap;
 
 import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.enterprise.inject.spi.CDI;
