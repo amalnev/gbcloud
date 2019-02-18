@@ -1,4 +1,4 @@
-package ru.malnev.gbcloud.client.impl;
+package ru.malnev.gbcloud.client.transport;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

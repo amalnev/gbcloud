@@ -1,4 +1,4 @@
-package ru.malnev.gbcloud.client.impl;
+package ru.malnev.gbcloud.client.transport;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -9,20 +9,11 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import lombok.SneakyThrows;
-import ru.malnev.gbcloud.client.conversations.ClientConversationManager;
-import ru.malnev.gbcloud.client.conversations.PingWorker;
-import ru.malnev.gbcloud.client.events.EMessageReceived;
-import ru.malnev.gbcloud.common.conversations.IConversationManager;
-import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
-import ru.malnev.gbcloud.common.transport.ITransportChannel;
 import ru.malnev.gbcloud.common.transport.Netty;
-import ru.malnev.gbcloud.common.transport.NettyTransportChannel;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.CDI;
-import javax.inject.Inject;
 
 @Netty
 @ApplicationScoped

@@ -1,4 +1,4 @@
-package ru.malnev.gbcloud.common.impl;
+package ru.malnev.gbcloud.common.transport;
 
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 import ru.malnev.gbcloud.common.transport.Netty;

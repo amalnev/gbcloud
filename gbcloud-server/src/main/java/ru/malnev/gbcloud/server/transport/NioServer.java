@@ -1,4 +1,4 @@
-package ru.malnev.gbcloud.server.impl;
+package ru.malnev.gbcloud.server.transport;
 
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.common.conversations.IConversationManager;

@@ -1,13 +1,9 @@
 package ru.malnev.gbcloud.server;
 
-import ru.malnev.gbcloud.common.impl.Bootstrap;
-import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
-import ru.malnev.gbcloud.common.transport.Nio;
-import ru.malnev.gbcloud.server.impl.NioServer;
+import ru.malnev.gbcloud.common.transport.Bootstrap;
 
 import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.enterprise.inject.spi.CDI;
-import javax.inject.Inject;
 
 public class App
 {

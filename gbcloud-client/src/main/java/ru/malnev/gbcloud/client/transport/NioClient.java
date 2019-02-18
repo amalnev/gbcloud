@@ -1,4 +1,4 @@
-package ru.malnev.gbcloud.client.impl;
+package ru.malnev.gbcloud.client.transport;
 
 import lombok.Getter;
 import lombok.Setter;
