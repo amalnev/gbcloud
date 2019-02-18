@@ -17,7 +17,12 @@ public abstract class AbstractConversationManager implements IConversationManage
     public void dispatchMessage(final @NotNull IMessage message,
                                 final @NotNull ITransportChannel transportChannel)
     {
-        final IConversation targetConversation = conversationMap.get(message.getConversationId());
+        IConversation targetConversation = null;
+        synchronized (this)
+        {
+            targetConversation = conversationMap.get(message.getConversationId());
+        }
+
         if (targetConversation != null)
         {
             targetConversation.processMessage(message, transportChannel);
@@ -33,19 +38,22 @@ public abstract class AbstractConversationManager implements IConversationManage
                 return;
             }
             newConversation.setConversationManager(this);
-            conversationMap.put(newConversation.getId(), newConversation);
+            synchronized (this)
+            {
+                conversationMap.put(newConversation.getId(), newConversation);
+            }
             newConversation.processMessage(message, transportChannel);
         }
     }
 
     @Override
-    public void stopConversation(@NotNull IConversation conversation)
+    public synchronized void stopConversation(@NotNull IConversation conversation)
     {
         conversationMap.remove(conversation.getId());
     }
 
     @Nullable
-    protected IConversation initiateConversation(final @NotNull IMessage message)
+    protected synchronized IConversation initiateConversation(final @NotNull IMessage message)
     {
         return null;
     }

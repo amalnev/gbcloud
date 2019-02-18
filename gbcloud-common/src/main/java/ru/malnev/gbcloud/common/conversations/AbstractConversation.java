@@ -18,20 +18,20 @@ public abstract class AbstractConversation implements IConversation
 {
     @Getter
     @Setter
-    private String id = UUID.randomUUID().toString();
+    private volatile String id = UUID.randomUUID().toString();
 
     @Getter
     @Setter
-    private IConversationManager conversationManager;
+    private volatile IConversationManager conversationManager;
 
     private Set<Class<? extends IMessage>> expectedMessages = new LinkedHashSet<>();
 
-    protected void expectMessage(final @NotNull Class<? extends IMessage> messageClass)
+    protected synchronized void expectMessage(final @NotNull Class<? extends IMessage> messageClass)
     {
         expectedMessages.add(messageClass);
     }
 
-    protected void stopExpectingMessage(final @NotNull Class<? extends IMessage> messageClass)
+    protected synchronized void stopExpectingMessage(final @NotNull Class<? extends IMessage> messageClass)
     {
         expectedMessages.remove(messageClass);
     }

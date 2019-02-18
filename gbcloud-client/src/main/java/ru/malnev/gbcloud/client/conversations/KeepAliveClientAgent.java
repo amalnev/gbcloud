@@ -7,10 +7,25 @@ import ru.malnev.gbcloud.common.transport.ITransportChannel;
 
 public class KeepAliveClientAgent extends AbstractClientAgent
 {
+    private final static int TIMEOUT = 2000;
+
     private long startTime;
 
+    private Thread timeoutWorker = new Thread(() ->
+    {
+        try
+        {
+            Thread.sleep(TIMEOUT);
+        }
+        catch (InterruptedException e)
+        {
+            return;
+        }
+        getConversationManager().stopConversation(this);
+    });
+
     @Override
-    public void processMessage(final @NotNull IMessage message,
+    public synchronized void processMessage(final @NotNull IMessage message,
                                final @NotNull ITransportChannel transportChannel)
     {
         final long delta = System.currentTimeMillis() - startTime;
@@ -23,9 +38,10 @@ public class KeepAliveClientAgent extends AbstractClientAgent
     }
 
     @Override
-    public void start()
+    public synchronized void start()
     {
         startTime = System.currentTimeMillis();
+        timeoutWorker.start();
         expectMessage(KeepAliveMessage.class);
         final IMessage outgoingMessage = new KeepAliveMessage();
         outgoingMessage.setConversationId(getId());

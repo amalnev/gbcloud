@@ -14,7 +14,7 @@ public class KeepAliveServerAgent extends AbstractConversation
     }
 
     @Override
-    public void processMessage(final @NotNull IMessage message,
+    public synchronized void processMessage(final @NotNull IMessage message,
                                final @NotNull ITransportChannel transportChannel)
     {
         if (message instanceof KeepAliveMessage)
