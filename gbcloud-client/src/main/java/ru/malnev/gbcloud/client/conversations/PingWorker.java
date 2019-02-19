@@ -5,17 +5,13 @@ import lombok.Setter;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.inject.Inject;
 
 public class PingWorker extends Thread
 {
     private static final int PING_PERIOD = 1000;
 
-    @Getter
-    @Setter
-    private ITransportChannel transportChannel;
-
-    @Getter
-    @Setter
+    @Inject
     private ClientConversationManager conversationManager;
 
     @Override
@@ -26,11 +22,8 @@ public class PingWorker extends Thread
             try
             {
                 Thread.sleep(PING_PERIOD);
-                if (!transportChannel.isConnected()) continue;
-                final IClientAgent keepAliveAgent = CDI.current().select(KeepAliveClientAgent.class).get();
-                keepAliveAgent.setTransportChannel(transportChannel);
-                keepAliveAgent.setConversationManager(conversationManager);
-                conversationManager.startConversation(keepAliveAgent);
+                if (!conversationManager.getTransportChannel().isConnected()) continue;
+                conversationManager.startConversation(KeepAliveClientAgent.class);
             }
             catch (InterruptedException e)
             {

@@ -16,5 +16,15 @@ public interface IConversation
 
     void setConversationManager(@NotNull IConversationManager conversationManager);
 
-    void processMessage(@NotNull IMessage message, @NotNull ITransportChannel transportChannel);
+    void processMessageFromPeer(@NotNull IMessage message);
+
+    void sendMessageToPeer(@NotNull IMessage message);
+
+    default void start() {}
+
+    default void stop() {}
+
+    long getTimeoutMillis();
+
+    void setTimeoutMillis(long timeoutMillis);
 }

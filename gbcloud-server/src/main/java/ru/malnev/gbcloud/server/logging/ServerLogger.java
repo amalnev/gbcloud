@@ -15,18 +15,23 @@ public class ServerLogger extends CommonLogger
     @SneakyThrows
     private Object logMethod(final InvocationContext invocationContext)
     {
-        final Class targetClass = invocationContext.getTarget().getClass();
         final Method method = invocationContext.getMethod();
         if (method.getName().equals("handleClientConnected"))
         {
             final EClientConntected event = (EClientConntected) invocationContext.getParameters()[0];
-            final String remoteAddress = event.getClientContext().getTransportChannel().getRemoteAddress();
+            final String remoteAddress = event.getClientContext()
+                    .getConversationManager()
+                    .getTransportChannel()
+                    .getRemoteAddress();
             write("Connection from " + remoteAddress + " accepted.");
         }
         else if (method.getName().equals("handleMessageReceived"))
         {
             final EMessageReceived event = (EMessageReceived) invocationContext.getParameters()[0];
-            final String remoteAddress = event.getClientContext().getTransportChannel().getRemoteAddress();
+            final String remoteAddress = event.getClientContext()
+                    .getConversationManager()
+                    .getTransportChannel()
+                    .getRemoteAddress();
             final String messageType = event.getMessage().getClass().getSimpleName();
             final String conversationId = event.getMessage().getConversationId();
             write("A message of type " +

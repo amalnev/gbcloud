@@ -8,12 +8,15 @@ import ru.malnev.gbcloud.server.persistence.repositories.UserRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
+import java.util.function.BiConsumer;
 
 @ApplicationScoped
 public class ServerBootstrap extends Bootstrap
 {
     private static final String ROOT_USERNAME = "root";
+    private static final String USER_USERNAME = "user";
     private static final String ROOT_DEFAULT_PASSWORD = "root";
+    private static final String USER_DEFAULT_PASSWORD = "user";
 
     @Inject
     private UserRepository userRepository;
@@ -21,17 +24,21 @@ public class ServerBootstrap extends Bootstrap
     @Override
     public void run()
     {
-        User root = userRepository.findByName(ROOT_USERNAME);
-        if(root == null)
+        final BiConsumer<String, String> createIfNone = (login, password) ->
         {
-            root = new User();
-            root.setName(ROOT_USERNAME);
-            root.setPasswordHash(PasswordUtil.hash(ROOT_DEFAULT_PASSWORD));
-            userRepository.merge(root);
-        }
+            User user = userRepository.findByName(login);
+            if(user == null)
+            {
+                user = new User();
+                user.setName(login);
+                user.setPasswordHash(PasswordUtil.hash(password));
+                userRepository.merge(user);
+            }
+        };
 
-        System.out.println(root.getName());
+        createIfNone.accept(ROOT_USERNAME, ROOT_DEFAULT_PASSWORD);
+        createIfNone.accept(USER_USERNAME, USER_DEFAULT_PASSWORD);
 
-        //super.run();
+        super.run();
     }
 }

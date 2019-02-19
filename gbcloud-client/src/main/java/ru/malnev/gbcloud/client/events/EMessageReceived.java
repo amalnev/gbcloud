@@ -12,9 +12,5 @@ import ru.malnev.gbcloud.common.transport.ITransportChannel;
 @AllArgsConstructor
 public class EMessageReceived
 {
-    private IConversationManager conversationManager;
-
     private IMessage message;
-
-    private ITransportChannel transportChannel;
 }

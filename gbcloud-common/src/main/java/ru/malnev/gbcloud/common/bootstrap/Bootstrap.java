@@ -1,5 +1,6 @@
 package ru.malnev.gbcloud.common.bootstrap;
 
+import lombok.Getter;
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 import ru.malnev.gbcloud.common.transport.Netty;
 
@@ -11,10 +12,16 @@ public class Bootstrap
 {
     @Netty
     @Inject
+    @Getter
     private INetworkEndpoint networkEndpoint;
 
     public void run()
     {
         networkEndpoint.start();
+    }
+
+    public void stop()
+    {
+        networkEndpoint.stop();
     }
 }

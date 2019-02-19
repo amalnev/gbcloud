@@ -5,6 +5,7 @@ import ru.malnev.gbcloud.common.conversations.IConversationManager;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.*;
 import ru.malnev.gbcloud.server.context.IClientContext;
+import ru.malnev.gbcloud.server.conversations.ServerConversationManager;
 import ru.malnev.gbcloud.server.events.EClientConntected;
 import ru.malnev.gbcloud.server.events.EClientDisconnected;
 import ru.malnev.gbcloud.server.events.EMessageReceived;
@@ -31,7 +32,7 @@ public class NioServer implements INetworkEndpoint
     private ServerSocketChannel socketChannel;
 
     @Inject
-    private Event<EClientConntected> clientConntectedBus;
+    private Event<EClientConntected> clientConnectedBus;
 
     @Inject
     private Event<EMessageReceived> messageReceivedBus;
@@ -77,12 +78,12 @@ public class NioServer implements INetworkEndpoint
                         clientSocketChannel = ((ServerSocketChannel) selectionKey.channel()).accept();
                         clientSocketChannel.configureBlocking(false);
                         final IClientContext clientContext = CDI.current().select(IClientContext.class).get();
-                        clientContext.setConversationManager(CDI.current().select(IConversationManager.class).get());
+                        clientContext.setConversationManager(CDI.current().select(ServerConversationManager.class).get());
                         final NioTransportChannel transportChannel = CDI.current().select(NioTransportChannel.class, new NioLiteral()).get();
                         transportChannel.setSocketChannel(clientSocketChannel);
-                        clientContext.setTransportChannel(transportChannel);
+                        clientContext.getConversationManager().setTransportChannel(transportChannel);
                         clientSocketChannel.register(selector, SelectionKey.OP_READ, clientContext);
-                        clientConntectedBus.fireAsync(new EClientConntected(clientContext));
+                        clientConnectedBus.fireAsync(new EClientConntected(clientContext));
                     }
                     catch (Exception e)
                     {
@@ -95,7 +96,7 @@ public class NioServer implements INetworkEndpoint
                     final IClientContext clientContext = (IClientContext) selectionKey.attachment();
                     try
                     {
-                        final IMessage message = clientContext.getTransportChannel().readMessage();
+                        final IMessage message = clientContext.getConversationManager().getTransportChannel().readMessage();
                         messageReceivedBus.fireAsync(new EMessageReceived(clientContext, message));
                     }
                     catch (final ITransportChannel.CorruptedDataReceived e)
@@ -104,7 +105,7 @@ public class NioServer implements INetworkEndpoint
                     }
                     catch (Exception e)
                     {
-                        closeSilently.accept(clientContext.getTransportChannel());
+                        closeSilently.accept(clientContext.getConversationManager().getTransportChannel());
                         clientDisconnectedBus.fireAsync(new EClientDisconnected(clientContext));
                     }
                 }

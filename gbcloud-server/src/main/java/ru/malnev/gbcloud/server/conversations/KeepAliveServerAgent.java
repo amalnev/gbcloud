@@ -14,16 +14,11 @@ public class KeepAliveServerAgent extends AbstractConversation
     }
 
     @Override
-    public synchronized void processMessage(final @NotNull IMessage message,
-                                            final @NotNull ITransportChannel transportChannel)
+    public synchronized void processMessageFromPeer(final @NotNull IMessage message)
     {
         if (message instanceof KeepAliveMessage)
         {
-            System.out.println("Ping request received from " + transportChannel.getRemoteAddress());
-
-            final IMessage outgoingMessage = new KeepAliveMessage();
-            outgoingMessage.setConversationId(getId());
-            transportChannel.sendMessage(outgoingMessage);
+            sendMessageToPeer(new KeepAliveMessage());
             getConversationManager().stopConversation(this);
         }
     }

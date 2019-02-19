@@ -1,5 +1,7 @@
 package ru.malnev.gbcloud.common.conversations;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.malnev.gbcloud.common.messages.IMessage;
@@ -11,11 +13,14 @@ import java.util.Map;
 
 public abstract class AbstractConversationManager implements IConversationManager
 {
-    protected Map<String, IConversation> conversationMap = new HashMap<>();
+    @Getter
+    @Setter
+    private ITransportChannel transportChannel;
+
+    private Map<String, IConversation> conversationMap = new HashMap<>();
 
     @Override
-    public void dispatchMessage(final @NotNull IMessage message,
-                                final @NotNull ITransportChannel transportChannel)
+    public void dispatchMessage(final @NotNull IMessage message)
     {
         IConversation targetConversation = null;
         synchronized (this)
@@ -25,10 +30,12 @@ public abstract class AbstractConversationManager implements IConversationManage
 
         if (targetConversation != null)
         {
-            targetConversation.processMessage(message, transportChannel);
+            targetConversation.processMessageFromPeer(message);
         }
         else
         {
+            if(message.getConversationId() == null) return;
+            if(message instanceof UnexpectedMessageResponse) return;
             final IConversation newConversation = initiateConversation(message);
             if (newConversation == null)
             {
@@ -42,14 +49,30 @@ public abstract class AbstractConversationManager implements IConversationManage
             {
                 conversationMap.put(newConversation.getId(), newConversation);
             }
-            newConversation.processMessage(message, transportChannel);
+            newConversation.start();
+            newConversation.processMessageFromPeer(message);
         }
     }
 
     @Override
-    public synchronized void stopConversation(@NotNull IConversation conversation)
+    public void stopConversation(@NotNull IConversation conversation)
     {
-        conversationMap.remove(conversation.getId());
+        conversation.stop();
+        synchronized (this)
+        {
+            conversationMap.remove(conversation.getId());
+        }
+    }
+
+    @Override
+    public void startConversation(@NotNull IConversation conversation)
+    {
+        synchronized (this)
+        {
+            conversationMap.put(conversation.getId(), conversation);
+        }
+        conversation.setConversationManager(this);
+        conversation.start();
     }
 
     @Nullable

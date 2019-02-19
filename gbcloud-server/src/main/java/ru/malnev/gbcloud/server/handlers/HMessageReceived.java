@@ -1,6 +1,7 @@
 package ru.malnev.gbcloud.server.handlers;
 
 import ru.malnev.gbcloud.common.conversations.IConversationManager;
+import ru.malnev.gbcloud.common.messages.AuthMessage;
 import ru.malnev.gbcloud.common.messages.UnauthorizedResponse;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
 import ru.malnev.gbcloud.server.context.IClientContext;
@@ -15,15 +16,14 @@ import javax.interceptor.Interceptors;
 @Interceptors(ServerLogger.class)
 public class HMessageReceived
 {
-
     private void handleMessageReceived(@ObservesAsync final EMessageReceived event)
     {
         final IClientContext clientContext = event.getClientContext();
-        final ITransportChannel transportChannel = clientContext.getTransportChannel();
-        if (clientContext.isAuthenticated())
+        final ITransportChannel transportChannel = clientContext.getConversationManager().getTransportChannel();
+        if (clientContext.isAuthenticated() || event.getMessage() instanceof AuthMessage)
         {
             final IConversationManager conversationManager = clientContext.getConversationManager();
-            conversationManager.dispatchMessage(event.getMessage(), transportChannel);
+            conversationManager.dispatchMessage(event.getMessage());
         }
         else
         {

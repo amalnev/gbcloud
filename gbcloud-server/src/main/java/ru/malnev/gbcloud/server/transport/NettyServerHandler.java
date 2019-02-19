@@ -8,6 +8,7 @@ import ru.malnev.gbcloud.common.transport.ITransportChannel;
 import ru.malnev.gbcloud.common.transport.Netty;
 import ru.malnev.gbcloud.common.transport.NettyTransportChannel;
 import ru.malnev.gbcloud.server.context.IClientContext;
+import ru.malnev.gbcloud.server.conversations.ServerConversationManager;
 import ru.malnev.gbcloud.server.events.EClientConntected;
 import ru.malnev.gbcloud.server.events.EMessageReceived;
 
@@ -20,7 +21,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter
     private IClientContext clientContext;
 
     @Inject
-    private IConversationManager conversationManager;
+    private ServerConversationManager conversationManager;
 
     @Inject
     @Netty
@@ -37,7 +38,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter
     {
         clientContext.setConversationManager(conversationManager);
         ((NettyTransportChannel) transportChannel).setChannelContext(ctx);
-        clientContext.setTransportChannel(transportChannel);
+        clientContext.getConversationManager().setTransportChannel(transportChannel);
         clientConntectedBus.fireAsync(new EClientConntected(clientContext));
     }
 

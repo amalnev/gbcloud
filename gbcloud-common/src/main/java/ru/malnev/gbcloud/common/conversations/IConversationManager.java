@@ -6,7 +6,14 @@ import ru.malnev.gbcloud.common.transport.ITransportChannel;
 
 public interface IConversationManager
 {
-    void dispatchMessage(@NotNull IMessage message, @NotNull ITransportChannel transportChannel);
+    @NotNull
+    ITransportChannel getTransportChannel();
+
+    void setTransportChannel(@NotNull ITransportChannel transportChannel);
+
+    void dispatchMessage(@NotNull IMessage message);
 
     void stopConversation(@NotNull IConversation conversation);
+
+    void startConversation(@NotNull IConversation conversation);
 }

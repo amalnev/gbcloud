@@ -3,6 +3,7 @@ package ru.malnev.gbcloud.client.transport;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import ru.malnev.gbcloud.client.conversations.AuthenticationClientAgent;
 import ru.malnev.gbcloud.client.conversations.ClientConversationManager;
 import ru.malnev.gbcloud.client.conversations.PingWorker;
 import ru.malnev.gbcloud.client.events.EMessageReceived;
@@ -14,6 +15,7 @@ import ru.malnev.gbcloud.common.transport.NioTransportChannel;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -39,9 +41,6 @@ public class NioClient implements INetworkEndpoint
 
     private final Selector selector;
 
-    @Inject
-    private PingWorker pingWorker;
-
     private final SocketChannel socketChannel;
 
     @SneakyThrows
@@ -58,9 +57,8 @@ public class NioClient implements INetworkEndpoint
     public void start()
     {
         ((NioTransportChannel) transportChannel).setSocketChannel(socketChannel);
-        pingWorker.setTransportChannel(transportChannel);
-        pingWorker.setConversationManager(conversationManager);
-        pingWorker.start();
+        conversationManager.setTransportChannel(transportChannel);
+        conversationManager.authenticate();
 
         while (transportChannel.isConnected())
         {
@@ -73,7 +71,7 @@ public class NioClient implements INetworkEndpoint
                     try
                     {
                         final IMessage message = transportChannel.readMessage();
-                        messageReceivedBus.fireAsync(new EMessageReceived(conversationManager, message, transportChannel));
+                        messageReceivedBus.fireAsync(new EMessageReceived(message));
                     }
                     catch (final ITransportChannel.CorruptedDataReceived e)
                     { //ignore
@@ -94,8 +92,6 @@ public class NioClient implements INetworkEndpoint
     @SneakyThrows
     public void stop()
     {
-        pingWorker.interrupt();
-        pingWorker.join();
         if (selector.isOpen()) selector.close();
         transportChannel.closeSilently();
     }

@@ -40,6 +40,7 @@ public class NettyTransportChannel implements ITransportChannel
     @Override
     public synchronized boolean isConnected()
     {
+        if(channelContext == null) return false;
         return channelContext.channel().isActive();
     }
 

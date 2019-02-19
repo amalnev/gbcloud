@@ -32,9 +32,8 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter
     public void channelActive(ChannelHandlerContext ctx) throws Exception
     {
         ((NettyTransportChannel) transportChannel).setChannelContext(ctx);
-        pingWorker.setTransportChannel(transportChannel);
-        pingWorker.setConversationManager(conversationManager);
-        pingWorker.start();
+        conversationManager.setTransportChannel(transportChannel);
+        conversationManager.authenticate();
     }
 
     @Override
@@ -43,10 +42,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter
     {
         if (msg == null) return;
         if (!(msg instanceof IMessage)) return;
-        messageReceivedBus.fireAsync(new EMessageReceived(
-                conversationManager,
-                (IMessage) msg,
-                transportChannel));
+        messageReceivedBus.fireAsync(new EMessageReceived((IMessage) msg));
     }
 
     @Override
