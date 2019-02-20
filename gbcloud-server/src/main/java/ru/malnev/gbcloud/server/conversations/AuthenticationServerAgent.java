@@ -1,6 +1,8 @@
 package ru.malnev.gbcloud.server.conversations;
 
 import org.jetbrains.annotations.NotNull;
+import ru.malnev.gbcloud.common.conversations.PassiveAgent;
+import ru.malnev.gbcloud.common.conversations.RespondsTo;
 import ru.malnev.gbcloud.common.messages.AuthFailResponse;
 import ru.malnev.gbcloud.common.messages.AuthMessage;
 import ru.malnev.gbcloud.common.messages.AuthSuccessResponse;
@@ -10,6 +12,7 @@ import ru.malnev.gbcloud.server.persistence.repositories.UserRepository;
 
 import javax.inject.Inject;
 
+@RespondsTo(AuthMessage.class)
 public class AuthenticationServerAgent extends ServerAgent
 {
     private static final String UNKNOWN_USER_MESSAGE = "Unknown user";

@@ -52,12 +52,12 @@ public class ServerBootstrap extends Bootstrap
 
         final Path serverRootDir = Paths.get(config.getRootDirectory());
         if (!Files.exists(serverRootDir)) Files.createDirectories(serverRootDir);
-        userRepository.select().forEach(user ->
+        for (final User user : userRepository.select())
         {
             final Path userHomeDir = Paths.get(config.getRootDirectory(), user.getName());
             if (!Files.exists(userHomeDir)) Files.createDirectories(userHomeDir);
             user.setHomeDirectory(userHomeDir.toAbsolutePath().toString());
             userRepository.merge(user);
-        });
+        }
     }
 }

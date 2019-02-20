@@ -7,17 +7,35 @@ import org.jetbrains.annotations.Nullable;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.UnexpectedMessageResponse;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
+import ru.malnev.gbcloud.common.utils.Util;
 
+import javax.enterprise.inject.spi.CDI;
+import javax.enterprise.util.AnnotationLiteral;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractConversationManager implements IConversationManager
 {
+    private static final AnnotationLiteral<PassiveAgent> PASSIVE_AGENT_ANNOTATION = new AnnotationLiteral<PassiveAgent>() {};
+
     @Getter
     @Setter
     private ITransportChannel transportChannel;
 
     private Map<String, IConversation> conversationMap = new HashMap<>();
+
+    private Map<Class<? extends IMessage>, Class<? extends IConversation>> conversationClassMap = new HashMap<>();
+
+    public AbstractConversationManager()
+    {
+        CDI.current().select(PASSIVE_AGENT_ANNOTATION).forEach(bean ->
+        {
+            final Class<? extends IConversation> conversationClass = (Class<? extends IConversation>) bean.getClass();
+            final Util.AnnotatedClass annotatedClass = Util.getAnnotation(RespondsTo.class, conversationClass);
+            if (annotatedClass == null) return;
+            conversationClassMap.put(((RespondsTo) annotatedClass.getAnnotation()).value(), annotatedClass.getAnnotatedClass());
+        });
+    }
 
     @Override
     public void dispatchMessage(final @NotNull IMessage message)
@@ -36,7 +54,16 @@ public abstract class AbstractConversationManager implements IConversationManage
         {
             if (message.getConversationId() == null) return;
             if (message instanceof UnexpectedMessageResponse) return;
-            final IConversation newConversation = initiateConversation(message);
+            IConversation newConversation = null;
+            synchronized (this)
+            {
+                final Class<? extends IConversation> conversationClass = conversationClassMap.get(message.getClass());
+                if (conversationClass != null)
+                {
+                    newConversation = CDI.current().select(conversationClass, PASSIVE_AGENT_ANNOTATION).get();
+                }
+            }
+
             if (newConversation == null)
             {
                 final IMessage unexpectedMessageResponse = new UnexpectedMessageResponse();
@@ -44,6 +71,7 @@ public abstract class AbstractConversationManager implements IConversationManage
                 transportChannel.sendMessage(unexpectedMessageResponse);
                 return;
             }
+            newConversation.setId(message.getConversationId());
             newConversation.setConversationManager(this);
             synchronized (this)
             {

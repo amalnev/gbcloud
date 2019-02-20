@@ -1,6 +1,8 @@
 package ru.malnev.gbcloud.server.conversations;
 
 import org.jetbrains.annotations.NotNull;
+import ru.malnev.gbcloud.common.conversations.PassiveAgent;
+import ru.malnev.gbcloud.common.conversations.RespondsTo;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.LsRequest;
 import ru.malnev.gbcloud.common.messages.LsResponse;
@@ -10,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@RespondsTo(LsRequest.class)
 public class LsServerAgent extends ServerAgent
 {
     public LsServerAgent()

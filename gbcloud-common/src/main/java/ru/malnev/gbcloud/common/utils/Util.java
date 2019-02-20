@@ -1,12 +1,17 @@
 package ru.malnev.gbcloud.common.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.zip.CRC32;
@@ -37,5 +42,27 @@ public class Util
         }
 
         return crc.getValue();
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class AnnotatedClass
+    {
+        private Annotation annotation;
+        private Class annotatedClass;
+    }
+
+    @Nullable
+    public static AnnotatedClass getAnnotation(final @NotNull Class annotationClass,
+                                               final @Nullable Class targetClass)
+    {
+        if (targetClass == null) return null;
+        final Annotation annotation = targetClass.getAnnotation(annotationClass);
+        if (annotation == null)
+        {
+            return getAnnotation(annotationClass, targetClass.getSuperclass());
+        }
+        return new AnnotatedClass(annotation, targetClass);
     }
 }

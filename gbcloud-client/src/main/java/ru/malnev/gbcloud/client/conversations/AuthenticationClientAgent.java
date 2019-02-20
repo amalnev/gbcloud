@@ -5,6 +5,7 @@ import ru.malnev.gbcloud.client.config.ClientConfig;
 import ru.malnev.gbcloud.client.events.EAuthFailure;
 import ru.malnev.gbcloud.client.events.EAuthSuccess;
 import ru.malnev.gbcloud.common.conversations.AbstractConversation;
+import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.messages.AuthFailResponse;
 import ru.malnev.gbcloud.common.messages.AuthMessage;
 import ru.malnev.gbcloud.common.messages.AuthSuccessResponse;
@@ -14,6 +15,7 @@ import ru.malnev.gbcloud.common.utils.Util;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+@ActiveAgent
 public class AuthenticationClientAgent extends AbstractConversation
 {
     @Inject

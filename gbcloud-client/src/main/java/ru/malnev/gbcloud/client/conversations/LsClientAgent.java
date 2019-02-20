@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.client.events.ELsConversationComplete;
 import ru.malnev.gbcloud.common.conversations.AbstractConversation;
+import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.LsRequest;
 import ru.malnev.gbcloud.common.messages.LsResponse;
@@ -12,6 +13,7 @@ import ru.malnev.gbcloud.common.messages.LsResponse;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+@ActiveAgent
 public class LsClientAgent extends AbstractConversation
 {
     @Getter
