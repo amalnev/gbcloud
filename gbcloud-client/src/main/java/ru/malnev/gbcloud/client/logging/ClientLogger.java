@@ -3,7 +3,10 @@ package ru.malnev.gbcloud.client.logging;
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.client.events.EAuthFailure;
 import ru.malnev.gbcloud.client.events.EMessageReceived;
+import ru.malnev.gbcloud.client.handlers.*;
 import ru.malnev.gbcloud.common.conversations.IConversationManager;
+import ru.malnev.gbcloud.common.events.EConversationFailed;
+import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
@@ -22,8 +25,9 @@ public class ClientLogger extends CommonLogger
     @SneakyThrows
     private Object logMethod(final InvocationContext invocationContext)
     {
-        final Method method = invocationContext.getMethod();
-        if (method.getName().equals("handleMessageReceived"))
+        final Class targetClass = invocationContext.getTarget().getClass();
+        //final Method method = invocationContext.getMethod();
+        if (HMessageReceived.class.isAssignableFrom(targetClass)/*method.getName().equals("handleMessageReceived")*/)
         {
             final EMessageReceived event = (EMessageReceived) invocationContext.getParameters()[0];
             final IMessage message = event.getMessage();
@@ -41,14 +45,24 @@ public class ClientLogger extends CommonLogger
                     " was received from " +
                     remoteAddress);
         }
-        else if (method.getName().equals("handleAuthSuccess"))
+        else if (HAuthSuccess.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthSuccess")*/)
         {
             write("Authentication success.");
         }
-        else if (method.getName().equals("handleAuthFailure"))
+        else if (HAuthFailure.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
         {
-            final EAuthFailure event = (EAuthFailure) invocationContext.getParameters()[1];
+            final EAuthFailure event = (EAuthFailure) invocationContext.getParameters()[0];
             write("Authentication failure. Reason: ");
+        }
+        else if(HConversationFailed.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
+        {
+            final EConversationFailed event = (EConversationFailed) invocationContext.getParameters()[0];
+            write("Conversation " + event.getConversation().getId() + " failed.");
+        }
+        else if(HConversationTimedOut.class.isAssignableFrom(targetClass))
+        {
+            final EConversationTimedOut event = (EConversationTimedOut) invocationContext.getParameters()[0];
+            write("Conversation " + event.getConversation().getId() + " timed out.");
         }
 
         return invocationContext.proceed();
