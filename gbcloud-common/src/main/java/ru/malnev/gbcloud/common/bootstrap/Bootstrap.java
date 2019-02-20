@@ -1,6 +1,8 @@
 package ru.malnev.gbcloud.common.bootstrap;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
+import ru.malnev.gbcloud.common.config.CommonConfig;
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 import ru.malnev.gbcloud.common.transport.Netty;
 
@@ -8,15 +10,18 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class Bootstrap
+public abstract class Bootstrap
 {
     @Netty
     @Inject
     @Getter
     private INetworkEndpoint networkEndpoint;
 
-    public void run()
+    @SneakyThrows
+    public void run(final String[] commandLineArgs)
     {
+        getConfig().parseCommandLine(commandLineArgs);
+        init();
         networkEndpoint.start();
     }
 
@@ -24,4 +29,8 @@ public class Bootstrap
     {
         networkEndpoint.stop();
     }
+
+    protected abstract CommonConfig getConfig();
+
+    protected abstract void init();
 }

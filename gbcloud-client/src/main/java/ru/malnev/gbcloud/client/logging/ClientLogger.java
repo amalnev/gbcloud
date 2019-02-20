@@ -29,7 +29,7 @@ public class ClientLogger extends CommonLogger
             final IMessage message = event.getMessage();
             final ITransportChannel transportChannel = conversationManager.getTransportChannel();
             String remoteAddress = null;
-            if(transportChannel.isConnected())
+            if (transportChannel.isConnected())
             {
                 remoteAddress = transportChannel.getRemoteAddress();
             }
@@ -41,11 +41,11 @@ public class ClientLogger extends CommonLogger
                     " was received from " +
                     remoteAddress);
         }
-        else if(method.getName().equals("handleAuthSuccess"))
+        else if (method.getName().equals("handleAuthSuccess"))
         {
             write("Authentication success.");
         }
-        else if(method.getName().equals("handleAuthFailure"))
+        else if (method.getName().equals("handleAuthFailure"))
         {
             final EAuthFailure event = (EAuthFailure) invocationContext.getParameters()[1];
             write("Authentication failure. Reason: ");

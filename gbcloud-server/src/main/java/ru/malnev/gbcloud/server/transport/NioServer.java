@@ -1,7 +1,6 @@
 package ru.malnev.gbcloud.server.transport;
 
 import lombok.SneakyThrows;
-import ru.malnev.gbcloud.common.conversations.IConversationManager;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.*;
 import ru.malnev.gbcloud.server.context.IClientContext;

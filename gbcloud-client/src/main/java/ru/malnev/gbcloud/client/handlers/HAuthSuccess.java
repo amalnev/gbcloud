@@ -1,6 +1,5 @@
 package ru.malnev.gbcloud.client.handlers;
 
-import ru.malnev.gbcloud.client.conversations.ClientConversationManager;
 import ru.malnev.gbcloud.client.conversations.PingWorker;
 import ru.malnev.gbcloud.client.events.EAuthSuccess;
 import ru.malnev.gbcloud.client.logging.ClientLogger;

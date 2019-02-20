@@ -8,7 +8,6 @@ import ru.malnev.gbcloud.server.persistence.entitites.AbstractEntity;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 public abstract class AbstractRepository<T extends AbstractEntity> implements IRepository<T>
@@ -57,7 +56,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> implements IR
     }
 
     @Override
-   public void remove(@NotNull String id)
+    public void remove(@NotNull String id)
     {
         final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("DELETE FROM ");

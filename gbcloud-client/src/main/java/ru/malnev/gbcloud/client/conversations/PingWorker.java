@@ -1,10 +1,5 @@
 package ru.malnev.gbcloud.client.conversations;
 
-import lombok.Getter;
-import lombok.Setter;
-import ru.malnev.gbcloud.common.transport.ITransportChannel;
-
-import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 
 public class PingWorker extends Thread

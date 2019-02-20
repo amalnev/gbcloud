@@ -11,4 +11,8 @@ public class User extends NamedEntity
     @Getter
     @Setter
     private String passwordHash;
+
+    @Getter
+    @Setter
+    private String homeDirectory;
 }

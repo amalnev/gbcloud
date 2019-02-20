@@ -1,9 +1,6 @@
 package ru.malnev.gbcloud.client.config;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import ru.malnev.gbcloud.common.config.BooleanOption;
 import ru.malnev.gbcloud.common.config.CommonConfig;
 import ru.malnev.gbcloud.common.config.StringOption;
 
@@ -14,14 +11,17 @@ public class ClientConfig extends CommonConfig
 {
     private static final String LOGIN_OPTION_NAME = "Login";
     private static final String PASSWORD_OPTION_NAME = "Password";
+    private static final String LOCAL_STORAGE_OPTION_NAME = "LocalStorage";
 
     private static final String DEFAULT_LOGIN = "user";
     private static final String DEFAULT_PASSWORD = "user";
+    private static final String DEFAULT_LOCAL_STORAGE = ".";
 
     public ClientConfig()
     {
         addAllowedOption(new StringOption(LOGIN_OPTION_NAME, DEFAULT_LOGIN));
         addAllowedOption(new StringOption(PASSWORD_OPTION_NAME, DEFAULT_PASSWORD));
+        addAllowedOption(new StringOption(LOCAL_STORAGE_OPTION_NAME, DEFAULT_LOCAL_STORAGE));
     }
 
     @NotNull
@@ -44,5 +44,16 @@ public class ClientConfig extends CommonConfig
     public void setPassword(final @NotNull String password)
     {
         setStringOption(PASSWORD_OPTION_NAME, password, DEFAULT_PASSWORD);
+    }
+
+    @NotNull
+    public String getLocalStorage()
+    {
+        return getStringOption(LOCAL_STORAGE_OPTION_NAME);
+    }
+
+    public void setLocalStorage(final @NotNull String localStorage)
+    {
+        setStringOption(LOCAL_STORAGE_OPTION_NAME, localStorage, DEFAULT_LOCAL_STORAGE);
     }
 }

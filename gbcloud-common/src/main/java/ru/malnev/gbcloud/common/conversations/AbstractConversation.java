@@ -4,11 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import ru.malnev.gbcloud.common.events.EConversationFailed;
+import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.messages.IMessage;
+import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
 import ru.malnev.gbcloud.common.messages.UnauthorizedResponse;
 import ru.malnev.gbcloud.common.messages.UnexpectedMessageResponse;
-import ru.malnev.gbcloud.common.transport.ITransportChannel;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 import java.util.LinkedHashSet;
@@ -18,6 +22,12 @@ import java.util.UUID;
 public abstract class AbstractConversation implements IConversation
 {
     private static final long DEFAULT_TIMEOUT = 200000;
+
+    @Inject
+    private Event<EConversationTimedOut> conversationTimedOutBus;
+
+    @Inject
+    Event<EConversationFailed> conversationFailedBus;
 
     @Getter
     @Setter
@@ -35,15 +45,16 @@ public abstract class AbstractConversation implements IConversation
 
     private final Thread timeoutWorker = new Thread(() ->
     {
-        while(true)
+        while (true)
         {
             try
             {
                 Thread.sleep(timeoutMillis);
                 final long delta = System.currentTimeMillis() - lastActivityTime;
-                if(delta >= timeoutMillis)
+                if (delta >= timeoutMillis)
                 {
                     getConversationManager().stopConversation(this);
+                    conversationTimedOutBus.fireAsync(new EConversationTimedOut(this));
                     break;
                 }
             }
@@ -86,10 +97,12 @@ public abstract class AbstractConversation implements IConversation
             {
                 expectedMessages.remove(messageClass);
             }
-            else if(messageClass.equals(UnexpectedMessageResponse.class) ||
-                    messageClass.equals(UnauthorizedResponse.class))
+            else if (messageClass.equals(UnexpectedMessageResponse.class) ||
+                    messageClass.equals(UnauthorizedResponse.class) ||
+                    messageClass.equals(ServerErrorResponse.class))
             {
                 conversationManager.stopConversation(this);
+                conversationFailedBus.fireAsync(new EConversationFailed(this));
                 return null;
             }
             else
@@ -98,7 +111,7 @@ public abstract class AbstractConversation implements IConversation
                 return null;
             }
         }
-        else if(invokedMethodName.equals("start"))
+        else if (invokedMethodName.equals("start"))
         {
             lastActivityTime = System.currentTimeMillis();
             timeoutWorker.start();
@@ -110,7 +123,7 @@ public abstract class AbstractConversation implements IConversation
         }
         finally
         {
-            if(invokedMethodName.equals("stop"))
+            if (invokedMethodName.equals("stop"))
             {
                 timeoutWorker.interrupt();
             }

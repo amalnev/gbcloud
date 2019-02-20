@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.AbstractConversation;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.KeepAliveMessage;
-import ru.malnev.gbcloud.common.transport.ITransportChannel;
 
 public class KeepAliveClientAgent extends AbstractConversation
 {

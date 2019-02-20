@@ -1,18 +1,16 @@
 package ru.malnev.gbcloud.server.conversations;
 
 import org.jetbrains.annotations.NotNull;
-import ru.malnev.gbcloud.common.conversations.AbstractConversation;
 import ru.malnev.gbcloud.common.messages.AuthFailResponse;
 import ru.malnev.gbcloud.common.messages.AuthMessage;
 import ru.malnev.gbcloud.common.messages.AuthSuccessResponse;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.transport.ITransportChannel;
 import ru.malnev.gbcloud.server.persistence.entitites.User;
 import ru.malnev.gbcloud.server.persistence.repositories.UserRepository;
 
 import javax.inject.Inject;
 
-public class AuthenticationServerAgent extends AbstractConversation
+public class AuthenticationServerAgent extends ServerAgent
 {
     private static final String UNKNOWN_USER_MESSAGE = "Unknown user";
     private static final String WRONG_PASSWORD_MESSAGE = "Wrong password";
@@ -28,12 +26,12 @@ public class AuthenticationServerAgent extends AbstractConversation
     @Override
     public void processMessageFromPeer(final @NotNull IMessage message)
     {
-        if(message instanceof AuthMessage)
+        if (message instanceof AuthMessage)
         {
             final ServerConversationManager conversationManager = (ServerConversationManager) getConversationManager();
             final AuthMessage authMessage = (AuthMessage) message;
             final User user = userRepository.findByName(authMessage.getLogin());
-            if(user == null)
+            if (user == null)
             {
                 final AuthFailResponse unknownUserResponse = new AuthFailResponse();
                 unknownUserResponse.setReason(UNKNOWN_USER_MESSAGE);
@@ -42,7 +40,7 @@ public class AuthenticationServerAgent extends AbstractConversation
                 return;
             }
 
-            if(!user.getPasswordHash().equals(authMessage.getPasswordHash()))
+            if (!user.getPasswordHash().equals(authMessage.getPasswordHash()))
             {
                 final AuthFailResponse wrongPasswordResponse = new AuthFailResponse();
                 wrongPasswordResponse.setReason(WRONG_PASSWORD_MESSAGE);

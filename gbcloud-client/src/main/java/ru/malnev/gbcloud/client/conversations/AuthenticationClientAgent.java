@@ -9,8 +9,7 @@ import ru.malnev.gbcloud.common.messages.AuthFailResponse;
 import ru.malnev.gbcloud.common.messages.AuthMessage;
 import ru.malnev.gbcloud.common.messages.AuthSuccessResponse;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.transport.ITransportChannel;
-import ru.malnev.gbcloud.common.utils.PasswordUtil;
+import ru.malnev.gbcloud.common.utils.Util;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -32,19 +31,19 @@ public class AuthenticationClientAgent extends AbstractConversation
         expectMessage(AuthFailResponse.class);
         expectMessage(AuthSuccessResponse.class);
         final IMessage outgoingMessage = new AuthMessage(config.getLogin(),
-                PasswordUtil.hash(config.getPassword()));
+                Util.hash(config.getPassword()));
         sendMessageToPeer(outgoingMessage);
     }
 
     @Override
     public synchronized void processMessageFromPeer(@NotNull IMessage message)
     {
-        if(message instanceof AuthFailResponse)
+        if (message instanceof AuthFailResponse)
         {
             final AuthFailResponse authFailResponse = (AuthFailResponse) message;
             authFailureBus.fireAsync(new EAuthFailure(authFailResponse.getReason()));
         }
-        else if(message instanceof AuthSuccessResponse)
+        else if (message instanceof AuthSuccessResponse)
         {
             authSuccessBus.fireAsync(new EAuthSuccess());
         }

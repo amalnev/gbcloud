@@ -33,11 +33,11 @@ public class ServerConversationManager extends AbstractConversationManager
         {
             conversation = CDI.current().select(KeepAliveServerAgent.class).get();
         }
-        else if(message instanceof AuthMessage)
+        else if (message instanceof AuthMessage)
         {
             conversation = CDI.current().select(AuthenticationServerAgent.class).get();
         }
-        if(conversation != null) conversation.setId(message.getConversationId());
+        if (conversation != null) conversation.setId(message.getConversationId());
         return conversation;
     }
 }

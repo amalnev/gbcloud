@@ -34,8 +34,8 @@ public abstract class AbstractConversationManager implements IConversationManage
         }
         else
         {
-            if(message.getConversationId() == null) return;
-            if(message instanceof UnexpectedMessageResponse) return;
+            if (message.getConversationId() == null) return;
+            if (message instanceof UnexpectedMessageResponse) return;
             final IConversation newConversation = initiateConversation(message);
             if (newConversation == null)
             {

@@ -2,7 +2,6 @@ package ru.malnev.gbcloud.common.conversations;
 
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.transport.ITransportChannel;
 
 public interface IConversation
 {

@@ -4,10 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.malnev.gbcloud.server.persistence.entitites.User;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
-
-@Stateless
 public class UserRepository extends AbstractRepository<User>
 {
     @Override
