@@ -15,10 +15,12 @@ import java.nio.file.Paths;
 @RespondsTo(LsRequest.class)
 public class LsServerAgent extends ServerAgent
 {
+    private static final int TIMEOUT_OVERRIDE = 60000; //1m
+
     public LsServerAgent()
     {
         expectMessage(LsRequest.class);
-        setTimeoutMillis(60000);
+        setTimeoutMillis(TIMEOUT_OVERRIDE);
     }
 
     @Override

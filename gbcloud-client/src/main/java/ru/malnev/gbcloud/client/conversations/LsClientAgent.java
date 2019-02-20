@@ -16,6 +16,8 @@ import javax.inject.Inject;
 @ActiveAgent
 public class LsClientAgent extends AbstractConversation
 {
+    private static final int TIMEOUT_OVERRIDE = 60000; //1m
+
     @Getter
     @Setter
     private String requestedPath;
@@ -35,7 +37,7 @@ public class LsClientAgent extends AbstractConversation
     @Override
     public void start()
     {
-        setTimeoutMillis(60000);
+        setTimeoutMillis(TIMEOUT_OVERRIDE);
         expectMessage(LsResponse.class);
         final LsRequest outgoingMessage = new LsRequest(requestedPath);
         sendMessageToPeer(outgoingMessage);
