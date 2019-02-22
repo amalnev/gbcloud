@@ -24,14 +24,6 @@ public class AuthenticationServerAgent extends ServerAgent
     @Inject
     private UserRepository userRepository;
 
-    @Inject
-    private Event<EConversationComplete> conversationCompleteBus;
-
-    public AuthenticationServerAgent()
-    {
-        expectMessage(AuthMessage.class);
-    }
-
     @Override
     public void processMessageFromPeer(final @NotNull IMessage message)
     {
@@ -61,8 +53,6 @@ public class AuthenticationServerAgent extends ServerAgent
             }
 
             sendMessageToPeer(response);
-            conversationCompleteBus.fireAsync(new EConversationComplete(this));
-            conversationManager.stopConversation(this);
         }
     }
 }

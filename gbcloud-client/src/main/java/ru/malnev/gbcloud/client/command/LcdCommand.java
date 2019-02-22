@@ -17,11 +17,6 @@ public class LcdCommand extends AbstractCommand
     @Inject
     private CLI cli;
 
-    public LcdCommand()
-    {
-        getArguments().add(new Argument(TARGET_DIRECTORY_ARGUMENT_NAME, null));
-    }
-
     @Override
     public void run()
     {

@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.AbstractConversation;
 import ru.malnev.gbcloud.common.conversations.ActiveAgent;
+import ru.malnev.gbcloud.common.conversations.Expects;
+import ru.malnev.gbcloud.common.conversations.StartsWith;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.LsRequest;
 import ru.malnev.gbcloud.common.messages.LsResponse;
@@ -13,11 +15,10 @@ import ru.malnev.gbcloud.common.messages.ServerOkResponse;
 import javax.inject.Inject;
 
 @ActiveAgent
+@StartsWith(LsRequest.class)
+@Expects(LsResponse.class)
 public class LsClientAgent extends AbstractConversation
 {
-    @Inject
-    private LsRequest request;
-
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
@@ -38,13 +39,5 @@ public class LsClientAgent extends AbstractConversation
             builder.append(element.getName());
             System.out.println(builder.toString());
         });
-        getConversationManager().stopConversation(this);
-    }
-
-    @Override
-    public void start()
-    {
-        expectMessage(LsResponse.class);
-        sendMessageToPeer(request);
     }
 }

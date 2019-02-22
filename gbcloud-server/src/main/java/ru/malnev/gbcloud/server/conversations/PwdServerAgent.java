@@ -16,20 +16,10 @@ public class PwdServerAgent extends ServerAgent
     @Inject
     private PwdResponse response;
 
-    @Inject
-    private Event<EConversationComplete> conversationCompleteBus;
-
-    public PwdServerAgent()
-    {
-        expectMessage(PwdRequest.class);
-    }
-
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
         response.setCurrentDirectory(getCurrentDirectory().pwd());
         sendMessageToPeer(response);
-        getConversationManager().stopConversation(this);
-        conversationCompleteBus.fireAsync(new EConversationComplete(this));
     }
 }

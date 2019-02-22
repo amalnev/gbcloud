@@ -78,7 +78,7 @@ public abstract class AbstractConversationManager implements IConversationManage
             {
                 conversationMap.put(newConversation.getId(), newConversation);
             }
-            newConversation.start();
+            newConversation.init();
             newConversation.processMessageFromPeer(message);
         }
     }
@@ -86,7 +86,7 @@ public abstract class AbstractConversationManager implements IConversationManage
     @Override
     public void stopConversation(@NotNull IConversation conversation)
     {
-        conversation.stop();
+        conversation.cleanup();
         synchronized (this)
         {
             conversationMap.remove(conversation.getId());
@@ -103,7 +103,7 @@ public abstract class AbstractConversationManager implements IConversationManage
             conversationMap.put(conversation.getId(), conversation);
         }
         conversation.setConversationManager(this);
-        conversation.start();
+        conversation.init();
     }
 
     @Nullable

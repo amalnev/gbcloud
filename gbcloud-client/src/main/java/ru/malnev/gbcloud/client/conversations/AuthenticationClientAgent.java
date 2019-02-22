@@ -6,6 +6,8 @@ import ru.malnev.gbcloud.client.events.EAuthFailure;
 import ru.malnev.gbcloud.client.events.EAuthSuccess;
 import ru.malnev.gbcloud.common.conversations.AbstractConversation;
 import ru.malnev.gbcloud.common.conversations.ActiveAgent;
+import ru.malnev.gbcloud.common.conversations.Expects;
+import ru.malnev.gbcloud.common.conversations.StartsWith;
 import ru.malnev.gbcloud.common.messages.AuthFailResponse;
 import ru.malnev.gbcloud.common.messages.AuthMessage;
 import ru.malnev.gbcloud.common.messages.AuthSuccessResponse;
@@ -16,6 +18,8 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 @ActiveAgent
+@StartsWith(AuthMessage.class)
+@Expects({AuthFailResponse.class, AuthSuccessResponse.class})
 public class AuthenticationClientAgent extends AbstractConversation
 {
     @Inject
@@ -28,13 +32,11 @@ public class AuthenticationClientAgent extends AbstractConversation
     private Event<EAuthSuccess> authSuccessBus;
 
     @Override
-    public synchronized void start()
+    protected void beforeStart(@NotNull IMessage initialMessage)
     {
-        expectMessage(AuthFailResponse.class);
-        expectMessage(AuthSuccessResponse.class);
-        final IMessage outgoingMessage = new AuthMessage(config.getLogin(),
-                Util.hash(config.getPassword()));
-        sendMessageToPeer(outgoingMessage);
+        final AuthMessage authMessage = (AuthMessage) initialMessage;
+        authMessage.setLogin(config.getLogin());
+        authMessage.setPasswordHash(Util.hash(config.getPassword()));
     }
 
     @Override
@@ -49,7 +51,5 @@ public class AuthenticationClientAgent extends AbstractConversation
         {
             authSuccessBus.fireAsync(new EAuthSuccess());
         }
-
-        getConversationManager().stopConversation(this);
     }
 }

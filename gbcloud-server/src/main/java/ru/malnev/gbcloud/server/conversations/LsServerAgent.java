@@ -16,11 +16,6 @@ public class LsServerAgent extends ServerAgent
     @Inject
     private LsResponse response;
 
-    public LsServerAgent()
-    {
-        expectMessage(LsRequest.class);
-    }
-
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
@@ -33,10 +28,6 @@ public class LsServerAgent extends ServerAgent
         catch (Exception e)
         {
             sendMessageToPeer(new ServerErrorResponse());
-        }
-        finally
-        {
-            getConversationManager().stopConversation(this);
         }
     }
 }

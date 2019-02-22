@@ -19,9 +19,9 @@ public interface IConversation
 
     void sendMessageToPeer(@NotNull IMessage message);
 
-    default void start() {}
+    default void init() {}
 
-    default void stop() {}
+    default void cleanup() {}
 
     long getTimeoutMillis();
 

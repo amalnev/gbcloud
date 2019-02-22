@@ -10,6 +10,8 @@ import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ServerOkResponse;
 import ru.malnev.gbcloud.server.filesystem.ServerDirectory;
 
+import javax.inject.Inject;
+
 @RespondsTo(CdRequest.class)
 public class CdServerAgent extends ServerAgent
 {
@@ -17,10 +19,11 @@ public class CdServerAgent extends ServerAgent
     private static final String PATH_DOES_NOT_EXIST_MESSAGE = "Specified path does not exist";
     private static final String PATH_ABSOLUTE_MESSAGE = "Absolute paths are not allowed";
 
-    public CdServerAgent()
-    {
-        expectMessage(CdRequest.class);
-    }
+    @Inject
+    private ServerOkResponse okResponse;
+
+    @Inject
+    private CdFailResponse failResponse;
 
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
@@ -46,12 +49,12 @@ public class CdServerAgent extends ServerAgent
 
         if(failureReason != null)
         {
-            sendMessageToPeer(new CdFailResponse(failureReason));
+            failResponse.setReason(failureReason);
+            sendMessageToPeer(failResponse);
         }
         else
         {
-            sendMessageToPeer(new ServerOkResponse());
+            sendMessageToPeer(okResponse);
         }
-        getConversationManager().stopConversation(this);
     }
 }

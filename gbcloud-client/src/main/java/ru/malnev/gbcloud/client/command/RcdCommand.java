@@ -20,11 +20,6 @@ public class RcdCommand extends AbstractCommand
     @Inject
     private ClientConversationManager conversationManager;
 
-    public RcdCommand()
-    {
-        getArguments().add(new Argument(TARGET_DIRECTORY_ARGUMENT_NAME, null));
-    }
-
     @Override
     public void run()
     {

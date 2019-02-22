@@ -16,19 +16,9 @@ public class KeepAliveServerAgent extends ServerAgent
     @Inject
     private KeepAliveMessage response;
 
-    @Inject
-    private Event<EConversationComplete> conversationCompleteBus;
-
-    public KeepAliveServerAgent()
-    {
-        expectMessage(KeepAliveMessage.class);
-    }
-
     @Override
     public synchronized void processMessageFromPeer(final @NotNull IMessage message)
     {
         sendMessageToPeer(response);
-        getConversationManager().stopConversation(this);
-        conversationCompleteBus.fireAsync(new EConversationComplete(this));
     }
 }
