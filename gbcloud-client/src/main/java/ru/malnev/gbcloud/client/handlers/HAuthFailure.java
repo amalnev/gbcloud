@@ -18,7 +18,7 @@ public class HAuthFailure
 
     private void handleAuthFailure(@ObservesAsync final EAuthFailure event)
     {
-        bootstrap.stop();
-        System.exit(0);
+        /*bootstrap.stop();
+        System.exit(0);*/
     }
 }

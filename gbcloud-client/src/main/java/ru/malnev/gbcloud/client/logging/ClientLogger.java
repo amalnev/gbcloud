@@ -5,6 +5,7 @@ import ru.malnev.gbcloud.client.events.EAuthFailure;
 import ru.malnev.gbcloud.client.events.EMessageReceived;
 import ru.malnev.gbcloud.client.handlers.*;
 import ru.malnev.gbcloud.common.conversations.IConversationManager;
+import ru.malnev.gbcloud.common.events.EConversationComplete;
 import ru.malnev.gbcloud.common.events.EConversationFailed;
 import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
@@ -63,6 +64,11 @@ public class ClientLogger extends CommonLogger
         {
             final EConversationTimedOut event = (EConversationTimedOut) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " timed out.");
+        }
+        else if(HConversationComplete.class.isAssignableFrom(targetClass))
+        {
+            final EConversationComplete event = (EConversationComplete) invocationContext.getParameters()[0];
+            write("Conversation " + event.getConversation().getId() + " completed successfully.");
         }
 
         return invocationContext.proceed();

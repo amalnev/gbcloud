@@ -1,15 +1,13 @@
 package ru.malnev.gbcloud.server.logging;
 
 import lombok.SneakyThrows;
+import ru.malnev.gbcloud.common.events.EConversationComplete;
 import ru.malnev.gbcloud.common.events.EConversationFailed;
 import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
 import ru.malnev.gbcloud.server.events.EClientConntected;
 import ru.malnev.gbcloud.server.events.EMessageReceived;
-import ru.malnev.gbcloud.server.handlers.HClientConnected;
-import ru.malnev.gbcloud.server.handlers.HConversationFailed;
-import ru.malnev.gbcloud.server.handlers.HConversationTimedOut;
-import ru.malnev.gbcloud.server.handlers.HMessageReceived;
+import ru.malnev.gbcloud.server.handlers.*;
 
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
@@ -57,6 +55,11 @@ public class ServerLogger extends CommonLogger
         {
             final EConversationTimedOut event = (EConversationTimedOut) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " timed out.");
+        }
+        else if(HConversationComplete.class.isAssignableFrom(targetClass))
+        {
+            final EConversationComplete event = (EConversationComplete) invocationContext.getParameters()[0];
+            write("Conversation " + event.getConversation().getId() + " completed successfully.");
         }
         return invocationContext.proceed();
     }

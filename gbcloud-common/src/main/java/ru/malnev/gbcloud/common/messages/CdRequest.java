@@ -3,9 +3,9 @@ package ru.malnev.gbcloud.common.messages;
 import lombok.Getter;
 import lombok.Setter;
 
-public class AuthFailResponse extends ServerErrorResponse
+public class CdRequest extends AbstractMessage
 {
     @Getter
     @Setter
-    private String reason;
+    private String targetDirectory;
 }

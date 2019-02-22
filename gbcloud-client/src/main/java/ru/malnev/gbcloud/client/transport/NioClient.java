@@ -3,6 +3,7 @@ package ru.malnev.gbcloud.client.transport;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import ru.malnev.gbcloud.client.config.ClientConfig;
 import ru.malnev.gbcloud.client.conversations.ClientConversationManager;
 import ru.malnev.gbcloud.client.events.EMessageReceived;
 import ru.malnev.gbcloud.common.messages.IMessage;
@@ -14,6 +15,7 @@ import ru.malnev.gbcloud.common.transport.NioTransportChannel;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -36,53 +38,74 @@ public class NioClient implements INetworkEndpoint
     @Inject
     private Event<EMessageReceived> messageReceivedBus;
 
-    private final Selector selector;
+    @Inject
+    private ClientConfig config;
 
-    private final SocketChannel socketChannel;
+    private Selector selector;
+
+    private SocketChannel socketChannel;
+
+    private final Thread workerThread = new Thread(() ->
+    {
+        try
+        {
+            ((NioTransportChannel) transportChannel).setSocketChannel(socketChannel);
+            conversationManager.setTransportChannel(transportChannel);
+            conversationManager.authenticate();
+
+            while (transportChannel.isConnected())
+            {
+                selector.select();
+                if (!selector.isOpen()) break;
+                for (final SelectionKey selectionKey : selector.selectedKeys())
+                {
+                    if (selectionKey.isReadable())
+                    {
+                        try
+                        {
+                            final IMessage message = transportChannel.readMessage();
+                            messageReceivedBus.fireAsync(new EMessageReceived(message));
+                        }
+                        catch (final ITransportChannel.CorruptedDataReceived e)
+                        { //ignore
+
+                        }
+                        catch (Exception e)
+                        {
+                            transportChannel.closeSilently();
+                            break;
+                        }
+                    }
+                }
+                selector.selectedKeys().clear();
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            try
+            {
+                if (selector.isOpen()) selector.close();
+            }catch(Exception ex){}
+            transportChannel.closeSilently();
+        }
+    });
 
     @SneakyThrows
     public NioClient()
     {
-        selector = Selector.open();
-        socketChannel = SocketChannel.open(new InetSocketAddress("localhost", 9999));
-        socketChannel.configureBlocking(false);
-        socketChannel.register(selector, SelectionKey.OP_READ);
+
     }
 
     @Override
     @SneakyThrows
     public void start()
     {
-        ((NioTransportChannel) transportChannel).setSocketChannel(socketChannel);
-        conversationManager.setTransportChannel(transportChannel);
-        conversationManager.authenticate();
-
-        while (transportChannel.isConnected())
-        {
-            selector.select();
-            if (!selector.isOpen()) break;
-            for (final SelectionKey selectionKey : selector.selectedKeys())
-            {
-                if (selectionKey.isReadable())
-                {
-                    try
-                    {
-                        final IMessage message = transportChannel.readMessage();
-                        messageReceivedBus.fireAsync(new EMessageReceived(message));
-                    }
-                    catch (final ITransportChannel.CorruptedDataReceived e)
-                    { //ignore
-
-                    }
-                    catch (Exception e)
-                    {
-                        transportChannel.closeSilently();
-                        break;
-                    }
-                }
-            }
-            selector.selectedKeys().clear();
-        }
+        selector = Selector.open();
+        socketChannel = SocketChannel.open(new InetSocketAddress(config.getServerAddress(), config.getServerPort()));
+        socketChannel.configureBlocking(false);
+        socketChannel.register(selector, SelectionKey.OP_READ);
+        workerThread.start();
     }
 
     @Override
@@ -91,5 +114,6 @@ public class NioClient implements INetworkEndpoint
     {
         if (selector.isOpen()) selector.close();
         transportChannel.closeSilently();
+        workerThread.join();
     }
 }

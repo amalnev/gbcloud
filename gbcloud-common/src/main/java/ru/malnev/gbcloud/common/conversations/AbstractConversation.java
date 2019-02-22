@@ -21,13 +21,13 @@ import java.util.UUID;
 
 public abstract class AbstractConversation implements IConversation
 {
-    private static final long DEFAULT_TIMEOUT = 200000;
+    private static final long DEFAULT_TIMEOUT = 2000000;
 
     @Inject
     private Event<EConversationTimedOut> conversationTimedOutBus;
 
     @Inject
-    Event<EConversationFailed> conversationFailedBus;
+    private Event<EConversationFailed> conversationFailedBus;
 
     @Getter
     @Setter
@@ -84,6 +84,12 @@ public abstract class AbstractConversation implements IConversation
         getConversationManager().getTransportChannel().sendMessage(message);
     }
 
+    @Override
+    public void stop()
+    {
+        timeoutWorker.interrupt();
+    }
+
     @AroundInvoke
     @SneakyThrows
     private Object wrapMethods(final InvocationContext invocationContext)
@@ -116,17 +122,11 @@ public abstract class AbstractConversation implements IConversation
             lastActivityTime = System.currentTimeMillis();
             timeoutWorker.start();
         }
+        else if(invokedMethodName.equals("stop"))
+        {
+            System.out.println();
+        }
 
-        try
-        {
-            return invocationContext.proceed();
-        }
-        finally
-        {
-            if (invokedMethodName.equals("stop"))
-            {
-                timeoutWorker.interrupt();
-            }
-        }
+        return invocationContext.proceed();
     }
 }

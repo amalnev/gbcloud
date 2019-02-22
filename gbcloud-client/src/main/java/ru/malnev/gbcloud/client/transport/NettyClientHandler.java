@@ -3,7 +3,6 @@ package ru.malnev.gbcloud.client.transport;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import ru.malnev.gbcloud.client.conversations.ClientConversationManager;
-import ru.malnev.gbcloud.client.conversations.PingWorker;
 import ru.malnev.gbcloud.client.events.EMessageReceived;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
@@ -24,9 +23,6 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter
 
     @Inject
     private Event<EMessageReceived> messageReceivedBus;
-
-    @Inject
-    private PingWorker pingWorker;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception

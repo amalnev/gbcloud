@@ -11,7 +11,7 @@ public class ServerConfig extends CommonConfig
 {
     private static final String ROOT_DIRECTORY_OPTION_NAME = "RootDir";
 
-    private static final String DEFAULT_ROOT_DIRECTORY = ".";
+    private static final String DEFAULT_ROOT_DIRECTORY = "./server";
 
     public ServerConfig()
     {

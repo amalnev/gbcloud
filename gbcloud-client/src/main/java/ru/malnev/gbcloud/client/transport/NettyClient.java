@@ -11,51 +11,75 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import lombok.SneakyThrows;
+import ru.malnev.gbcloud.client.config.ClientConfig;
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 import ru.malnev.gbcloud.common.transport.Netty;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
+import javax.inject.Inject;
 
 @Netty
+@Default
 @ApplicationScoped
 public class NettyClient implements INetworkEndpoint
 {
-    private ChannelFuture channelFuture;
+    private volatile ChannelFuture channelFuture;
+
+    @Inject
+    private ClientConfig config;
+
+    private Thread workerThread;
+
+    private final Runnable worker = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            final EventLoopGroup group = new NioEventLoopGroup();
+            try
+            {
+                final Bootstrap bootstrap = new Bootstrap();
+                bootstrap.group(group)
+                        .channel(NioSocketChannel.class)
+                        .handler(new ChannelInitializer<SocketChannel>()
+                        {
+                            @Override
+                            protected void initChannel(final SocketChannel socketChannel)
+                            {
+                                socketChannel.pipeline().addLast(new ObjectEncoder(),
+                                        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                                        CDI.current().select(NettyClientHandler.class).get());
+                            }
+                        });
+                channelFuture = bootstrap.connect(config.getServerAddress(), config.getServerPort()).sync();
+                channelFuture.channel().closeFuture().sync();
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                group.shutdownGracefully();
+            }
+        }
+    };
 
     @Override
     @SneakyThrows
     public void start()
     {
-        final EventLoopGroup group = new NioEventLoopGroup();
-        try
-        {
-            final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(group)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<SocketChannel>()
-                    {
-                        @Override
-                        protected void initChannel(final SocketChannel socketChannel)
-                        {
-                            socketChannel.pipeline().addLast(new ObjectEncoder(),
-                                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
-                                    CDI.current().select(NettyClientHandler.class).get());
-                        }
-                    });
-            channelFuture = bootstrap.connect("localhost", 9999).sync();
-            channelFuture.channel().closeFuture().sync();
-        }
-        finally
-        {
-            group.shutdownGracefully();
-        }
+        workerThread = new Thread(worker);
+        workerThread.start();
     }
 
     @Override
     @SneakyThrows
     public void stop()
     {
-        channelFuture.channel().close();
+        if(channelFuture != null) channelFuture.channel().close();
+        if(workerThread != null) workerThread.join();
     }
 }

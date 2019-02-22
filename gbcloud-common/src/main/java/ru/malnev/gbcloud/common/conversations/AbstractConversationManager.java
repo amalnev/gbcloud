@@ -2,6 +2,7 @@ package ru.malnev.gbcloud.common.conversations;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.malnev.gbcloud.common.messages.IMessage;
@@ -93,8 +94,10 @@ public abstract class AbstractConversationManager implements IConversationManage
     }
 
     @Override
+    @SneakyThrows
     public void startConversation(@NotNull IConversation conversation)
     {
+        if(getTransportChannel() == null) throw new Exception();
         synchronized (this)
         {
             conversationMap.put(conversation.getId(), conversation);
