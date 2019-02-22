@@ -8,33 +8,43 @@ import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.LsRequest;
 import ru.malnev.gbcloud.common.messages.LsResponse;
+import ru.malnev.gbcloud.common.messages.ServerOkResponse;
+
+import javax.inject.Inject;
 
 @ActiveAgent
 public class LsClientAgent extends AbstractConversation
 {
-    private static final int TIMEOUT_OVERRIDE = 60000; //1m
-
-    @Getter
-    @Setter
-    private String requestedPath;
-
-
+    @Inject
+    private LsRequest request;
 
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
-        if (message instanceof LsResponse)
+        final LsResponse response = (LsResponse) message;
+        response.getElements().forEach(element ->
         {
-            //lsConversationCompleteBus.fireAsync(new ELsConversationComplete(this, (LsResponse) message));
-        }
+            final StringBuilder builder = new StringBuilder();
+            if(element.isDirectory())
+            {
+                builder.append("<DIR>\t\t");
+            }
+            else
+            {
+                builder.append("\t\t");
+                builder.append(element.getSize());
+                builder.append("\t");
+            }
+            builder.append(element.getName());
+            System.out.println(builder.toString());
+        });
+        getConversationManager().stopConversation(this);
     }
 
     @Override
     public void start()
     {
-        setTimeoutMillis(TIMEOUT_OVERRIDE);
         expectMessage(LsResponse.class);
-        final LsRequest outgoingMessage = new LsRequest(requestedPath);
-        sendMessageToPeer(outgoingMessage);
+        sendMessageToPeer(request);
     }
 }

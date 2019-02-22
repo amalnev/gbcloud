@@ -81,5 +81,7 @@ public class NettyClient implements INetworkEndpoint
     {
         if(channelFuture != null) channelFuture.channel().close();
         if(workerThread != null) workerThread.join();
+        channelFuture = null;
+        workerThread = null;
     }
 }

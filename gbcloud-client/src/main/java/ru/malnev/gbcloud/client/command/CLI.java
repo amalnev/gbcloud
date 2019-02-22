@@ -46,6 +46,7 @@ public class CLI
     @Getter
     private boolean active = true;
 
+    @Getter
     private Path currentDirectory;
 
     @Inject
@@ -100,6 +101,6 @@ public class CLI
         if(!newPath.isAbsolute()) newPath = currentDirectory.resolve(newPath);
         if(!Files.exists(newPath)) throw new PathDoesNotExistException();
         if(!Files.isDirectory(newPath)) throw new PathIsNotADirectoryException();
-        currentDirectory = newPath;
+        currentDirectory = newPath.normalize();
     }
 }

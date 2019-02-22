@@ -3,11 +3,9 @@ package ru.malnev.gbcloud.server.conversations;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.PassiveAgent;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
-import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.messages.LsRequest;
-import ru.malnev.gbcloud.common.messages.LsResponse;
-import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
+import ru.malnev.gbcloud.common.messages.*;
 
+import javax.inject.Inject;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,12 +13,12 @@ import java.nio.file.Paths;
 @RespondsTo(LsRequest.class)
 public class LsServerAgent extends ServerAgent
 {
-    private static final int TIMEOUT_OVERRIDE = 60000; //1m
+    @Inject
+    private LsResponse response;
 
     public LsServerAgent()
     {
         expectMessage(LsRequest.class);
-        setTimeoutMillis(TIMEOUT_OVERRIDE);
     }
 
     @Override
@@ -28,27 +26,8 @@ public class LsServerAgent extends ServerAgent
     {
         try
         {
-            final Path userHomeDir = Paths.get(getUser().getHomeDirectory());
-            final Path targetPath = userHomeDir.resolve(((LsRequest) message).getRequestedPath());
-            final LsResponse response = new LsResponse();
-            response.setRequestedPath(((LsRequest) message).getRequestedPath());
-            if (!Files.exists(targetPath))
-            {
-                response.setExisting(false);
-            }
-            else
-            {
-                response.setExisting(true);
-                if (Files.isDirectory(targetPath))
-                {
-                    Files.newDirectoryStream(targetPath).forEach(element ->
-                            response.getElements().add(new LsResponse.FilesystemElement(element)));
-                }
-                else
-                {
-                    response.getElements().add(new LsResponse.FilesystemElement(targetPath));
-                }
-            }
+            Files.newDirectoryStream(getCurrentDirectory().getCurrentDirectory()).forEach(element ->
+                    response.getElements().add(new LsResponse.FilesystemElement(element)));
             sendMessageToPeer(response);
         }
         catch (Exception e)

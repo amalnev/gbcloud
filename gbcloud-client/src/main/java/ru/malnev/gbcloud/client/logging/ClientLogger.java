@@ -53,7 +53,7 @@ public class ClientLogger extends CommonLogger
         else if (HAuthFailure.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
         {
             final EAuthFailure event = (EAuthFailure) invocationContext.getParameters()[0];
-            write("Authentication failure. Reason: ");
+            write("Authentication failure. Reason: " + event.getReason());
         }
         else if(HConversationFailed.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
         {
