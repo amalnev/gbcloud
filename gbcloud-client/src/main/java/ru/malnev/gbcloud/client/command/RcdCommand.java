@@ -7,11 +7,12 @@ import ru.malnev.gbcloud.common.messages.CdRequest;
 
 import javax.inject.Inject;
 
-@Keyword("rcd")
+import static ru.malnev.gbcloud.client.command.Const.TARGET_DIRECTORY_ARGUMENT_NAME;
+
+@Keyword(Const.RCD_COMMAND_KEYWORD)
+@Arguments(TARGET_DIRECTORY_ARGUMENT_NAME)
 public class RcdCommand extends AbstractCommand
 {
-    private final static String TARGET_DIRECTORY_ARGUMENT_NAME = "Target directory";
-
     @Inject
     @ActiveAgent
     private CdClientAgent agent;

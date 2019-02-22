@@ -5,25 +5,19 @@ import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 
 import javax.inject.Inject;
 
-@Keyword("open")
+import static ru.malnev.gbcloud.client.command.Const.LOGIN_ARGUMENT_NAME;
+import static ru.malnev.gbcloud.client.command.Const.PASSWORD_ARGUMENT_NAME;
+import static ru.malnev.gbcloud.client.command.Const.SERVER_ARGUMENT_NAME;
+
+@Keyword(Const.OPEN_COMMAND_KEYWORD)
+@Arguments({SERVER_ARGUMENT_NAME, LOGIN_ARGUMENT_NAME, PASSWORD_ARGUMENT_NAME})
 public class OpenCommand extends AbstractCommand
 {
-    private static final String SERVER_ARGUMENT_NAME = "Host";
-    private static final String LOGIN_ARGUMENT_NAME = "Login";
-    private static final String PASSWORD_ARGUMENT_NAME = "Password";
-
     @Inject
     private ClientConfig config;
 
     @Inject
     private INetworkEndpoint networkEndpoint;
-
-    public OpenCommand()
-    {
-        getArguments().add(new Argument(SERVER_ARGUMENT_NAME, null));
-        getArguments().add(new Argument(LOGIN_ARGUMENT_NAME, null));
-        getArguments().add(new Argument(PASSWORD_ARGUMENT_NAME, null));
-    }
 
     @Override
     public void run()

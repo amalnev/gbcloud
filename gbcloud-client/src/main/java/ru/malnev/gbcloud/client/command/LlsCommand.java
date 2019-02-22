@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 
-@Keyword("lls")
+@Keyword(Const.LLS_COMMAND_KEYWORD)
 public class LlsCommand extends AbstractCommand
 {
     @Inject

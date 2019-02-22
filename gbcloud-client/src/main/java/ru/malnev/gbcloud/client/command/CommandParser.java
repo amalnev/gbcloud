@@ -46,6 +46,14 @@ public class CommandParser implements ICommandParser
         if (!commandMap.containsKey(keyword)) return null;
 
         final ICommand commandObject = CDI.current().select(commandMap.get(keyword), COMMAND_ANNOTATION).get();
+        final Util.AnnotatedClass annotatedClass = Util.getAnnotation(Arguments.class, commandObject.getClass());
+        if(annotatedClass != null)
+        {
+            final Arguments argumentsAnnotation = (Arguments) annotatedClass.getAnnotation();
+            final String[] argumentNames = argumentsAnnotation.value();
+            for(final String argumentName : argumentNames)
+                commandObject.getArguments().add(new Argument(argumentName, null));
+        }
         commandObject.collectArguments(words);
         return commandObject;
     }

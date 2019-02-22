@@ -5,10 +5,12 @@ import ru.malnev.gbcloud.common.filesystem.PathIsNotADirectoryException;
 
 import javax.inject.Inject;
 
-@Keyword("lcd")
+import static ru.malnev.gbcloud.client.command.Const.TARGET_DIRECTORY_ARGUMENT_NAME;
+
+@Keyword(Const.LCD_COMMAND_KEYWORD)
+@Arguments(TARGET_DIRECTORY_ARGUMENT_NAME)
 public class LcdCommand extends AbstractCommand
 {
-    private final static String TARGET_DIRECTORY_ARGUMENT_NAME = "Target directory";
     private final static String PATH_DOES_NOT_EXIST_MESSAGE = "Specified path does not exist";
     private final static String PATH_IS_NOT_A_DIR_MESSAGE = "Specified path is not a directory";
 

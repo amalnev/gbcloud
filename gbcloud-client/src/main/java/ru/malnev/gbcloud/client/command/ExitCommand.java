@@ -5,7 +5,7 @@ import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-@Keyword("exit")
+@Keyword(Const.EXIT_COMMAND_KEYWORD)
 public class ExitCommand extends AbstractCommand
 {
     @Inject

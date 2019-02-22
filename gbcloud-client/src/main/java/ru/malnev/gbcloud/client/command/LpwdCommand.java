@@ -2,7 +2,7 @@ package ru.malnev.gbcloud.client.command;
 
 import javax.inject.Inject;
 
-@Keyword("lpwd")
+@Keyword(Const.LPWD_COMMAND_KEYWORD)
 public class LpwdCommand extends AbstractCommand
 {
     @Inject
