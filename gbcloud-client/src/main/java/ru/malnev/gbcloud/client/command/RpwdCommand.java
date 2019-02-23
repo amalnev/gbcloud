@@ -6,6 +6,7 @@ import ru.malnev.gbcloud.client.conversations.PwdClientAgent;
 import javax.inject.Inject;
 
 @Keyword(Const.RPWD_COMMAND_KEYWORD)
+@Description(Const.RPWD_COMMAND_DESCRIPTION)
 public class RpwdCommand extends AbstractCommand
 {
     @Inject

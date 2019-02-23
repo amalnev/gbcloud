@@ -14,10 +14,7 @@ import java.util.Map;
 @ApplicationScoped
 public class CommandParser implements ICommandParser
 {
-    private static final AnnotationLiteral<Command> COMMAND_ANNOTATION = new AnnotationLiteral<Command>()
-    {
-        private static final long serialVersionUID = 1L;
-    };
+    private static final AnnotationLiteral<Command> COMMAND_ANNOTATION = new AnnotationLiteral<Command>(){};
 
     private final Map<String, Class<? extends ICommand>> commandMap = new HashMap<>();
 

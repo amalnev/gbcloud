@@ -6,6 +6,7 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 @Keyword(Const.EXIT_COMMAND_KEYWORD)
+@Description(Const.EXIT_COMMAND_DESCRIPTION)
 public class ExitCommand extends AbstractCommand
 {
     @Inject

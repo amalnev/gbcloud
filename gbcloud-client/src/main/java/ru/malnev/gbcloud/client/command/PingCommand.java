@@ -6,6 +6,7 @@ import ru.malnev.gbcloud.client.conversations.KeepAliveClientAgent;
 import javax.inject.Inject;
 
 @Keyword(Const.PING_COMMAND_KEYWORD)
+@Description(Const.PING_COMMAND_DESCRIPTION)
 public class PingCommand extends AbstractCommand
 {
     @Inject

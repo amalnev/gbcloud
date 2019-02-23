@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import static ru.malnev.gbcloud.client.command.Const.CLOSE_COMMAND_KEYWORD;
 
 @Keyword(CLOSE_COMMAND_KEYWORD)
+@Description(Const.CLOSE_COMMAND_DESCRIPTION)
 public class CloseCommand extends AbstractCommand
 {
     @Inject

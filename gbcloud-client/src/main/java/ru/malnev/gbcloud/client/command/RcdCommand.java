@@ -11,6 +11,7 @@ import static ru.malnev.gbcloud.client.command.Const.TARGET_DIRECTORY_ARGUMENT_N
 
 @Keyword(Const.RCD_COMMAND_KEYWORD)
 @Arguments(TARGET_DIRECTORY_ARGUMENT_NAME)
+@Description(Const.RCD_COMMAND_DESCRIPTION)
 public class RcdCommand extends AbstractCommand
 {
     @Inject

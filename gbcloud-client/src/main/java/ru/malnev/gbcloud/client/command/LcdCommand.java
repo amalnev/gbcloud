@@ -9,6 +9,7 @@ import static ru.malnev.gbcloud.client.command.Const.TARGET_DIRECTORY_ARGUMENT_N
 
 @Keyword(Const.LCD_COMMAND_KEYWORD)
 @Arguments(TARGET_DIRECTORY_ARGUMENT_NAME)
+@Description(Const.LCD_COMMAND_DESCRIPTION)
 public class LcdCommand extends AbstractCommand
 {
     private final static String PATH_DOES_NOT_EXIST_MESSAGE = "Specified path does not exist";
