@@ -22,11 +22,18 @@ import java.util.function.Consumer;
 @Interceptors(CommonLogger.class)
 public class NioTransportChannel implements ITransportChannel
 {
+    //Пересылаемые и принимаемые пакеты имеют следующий формат:
+    //1. int magic - магическое число.
+    //2. int objectSize - размер сериализованного объекта IMessage.
+    //3. байты сериализованного объекта IMessage.
+
     private static final int MAGIC = 114576;
 
     private static final int READ_BUFFER_CAPACITY = 1024 * 1024;
 
-    private static final int MAXIMUM_OBJECT_SIZE = 1024 * 1024 - 8;
+    private static final int HEADER_SIZE = 8;
+
+    private static final int MAXIMUM_OBJECT_SIZE = READ_BUFFER_CAPACITY - HEADER_SIZE;
 
     private static final long READ_QUANTUM = 100;
 
@@ -64,7 +71,10 @@ public class NioTransportChannel implements ITransportChannel
             messageBuffer.putInt(objectSize);
 
             //Здесь происходит копирование данных из буфера, в который объект был сериализован
-            //в байт-буфер для отправки.
+            //в байт-буфер для отправки. К сожалению, без такого копирования не обойтись. Если
+            //записать "заголовок" (магию + размер объекта) в отдельный буфер и отправить последовательно
+            //сначала буфер заголовка, а потом буфер объекта, то нет гарантии что данные уйдут в сеть
+            //именно в таком порядке. Поэтому весь отправляемый пакет должен быть сформирован в одном байт-буфере.
             messageBuffer.put(byteArrayOutputStream.toByteArray());
             messageBuffer.flip();
             socketChannel.write(messageBuffer);
@@ -173,10 +183,10 @@ public class NioTransportChannel implements ITransportChannel
 
             //запрашиваем фактический массив байт, управляемый байтбуфером, и конструируем поверх него ObjectInputStream
             final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(readBuffer.array(), readBuffer.position(), objectSize);
-            final ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
             try
             {
                 //пытаемся десериализовать из ObjectInputStream объект реализующий IMessage
+                final ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
                 final Object receivedObject = objectInputStream.readObject();
                 if (receivedObject instanceof IMessage)
                 {
@@ -192,7 +202,7 @@ public class NioTransportChannel implements ITransportChannel
             finally
             {
                 //как бы ни закончилось чтение объекта, убираем из буфера обработанные данные
-                readBuffer.position(objectSize);
+                readBuffer.position(readBuffer.position() + objectSize);
             }
 
             //объект был прочитан, но он принадлежит к неправильному классу
