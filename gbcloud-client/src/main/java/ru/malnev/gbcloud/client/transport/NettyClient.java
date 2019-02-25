@@ -21,7 +21,6 @@ import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 
 @Netty
-@Default
 @ApplicationScoped
 public class NettyClient implements INetworkEndpoint
 {

@@ -3,6 +3,7 @@ package ru.malnev.gbcloud.server.transport;
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.*;
+import ru.malnev.gbcloud.server.config.ServerConfig;
 import ru.malnev.gbcloud.server.context.IClientContext;
 import ru.malnev.gbcloud.server.conversations.ServerConversationManager;
 import ru.malnev.gbcloud.server.events.EClientConntected;
@@ -11,6 +12,7 @@ import ru.malnev.gbcloud.server.events.EMessageReceived;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import java.io.Closeable;
@@ -23,12 +25,16 @@ import java.nio.channels.SocketChannel;
 import java.util.function.Consumer;
 
 @Nio
+@Default
 @ApplicationScoped
 public class NioServer implements INetworkEndpoint
 {
     private Selector selector;
 
     private ServerSocketChannel socketChannel;
+
+    @Inject
+    private ServerConfig config;
 
     @Inject
     private Event<EClientConntected> clientConnectedBus;
@@ -42,11 +48,7 @@ public class NioServer implements INetworkEndpoint
     @SneakyThrows
     public NioServer()
     {
-        selector = Selector.open();
-        socketChannel = ServerSocketChannel.open();
-        socketChannel.bind(new InetSocketAddress("localhost", 9999));
-        socketChannel.configureBlocking(false);
-        socketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
     }
 
     @Override
@@ -62,6 +64,12 @@ public class NioServer implements INetworkEndpoint
             }
             catch (IOException e) {}
         };
+
+        selector = Selector.open();
+        socketChannel = ServerSocketChannel.open();
+        socketChannel.bind(new InetSocketAddress("localhost", config.getServerPort()));
+        socketChannel.configureBlocking(false);
+        socketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
         while (socketChannel.isOpen())
         {
@@ -100,7 +108,7 @@ public class NioServer implements INetworkEndpoint
                     }
                     catch (final ITransportChannel.CorruptedDataReceived e)
                     { //ignore
-
+                        System.out.println();
                     }
                     catch (Exception e)
                     {

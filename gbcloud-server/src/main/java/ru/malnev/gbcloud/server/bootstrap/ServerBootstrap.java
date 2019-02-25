@@ -33,7 +33,6 @@ public class ServerBootstrap extends Bootstrap
     @Getter(AccessLevel.PROTECTED)
     private ServerConfig config;
 
-    @Netty
     @Inject
     @Getter
     private INetworkEndpoint networkEndpoint;

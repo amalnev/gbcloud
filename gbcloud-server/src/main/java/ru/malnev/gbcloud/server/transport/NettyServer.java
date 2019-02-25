@@ -14,15 +14,21 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 import ru.malnev.gbcloud.common.transport.Netty;
+import ru.malnev.gbcloud.server.config.ServerConfig;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
+import javax.inject.Inject;
 
 @Netty
 @ApplicationScoped
 public class NettyServer implements INetworkEndpoint
 {
     private ChannelFuture channelFuture;
+
+    @Inject
+    private ServerConfig config;
 
     @Override
     @SneakyThrows
@@ -45,7 +51,7 @@ public class NettyServer implements INetworkEndpoint
                                     CDI.current().select(NettyServerHandler.class).get());
                         }
                     }).childOption(ChannelOption.SO_KEEPALIVE, true);
-            channelFuture = serverBootstrap.bind(9999).sync();
+            channelFuture = serverBootstrap.bind(config.getServerPort()).sync();
             channelFuture.channel().closeFuture().sync();
         }
         finally
