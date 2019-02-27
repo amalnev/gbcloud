@@ -5,21 +5,31 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
 import ru.malnev.gbcloud.common.messages.UnexpectedMessageResponse;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
 import ru.malnev.gbcloud.common.utils.Util;
 
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Inject;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class AbstractConversationManager implements IConversationManager
 {
+    private static final int GARBAGE_COLLECTOR_QUANTUM = 1000;
+
     private static final AnnotationLiteral<PassiveAgent> PASSIVE_AGENT_ANNOTATION = new AnnotationLiteral<PassiveAgent>() {};
+
+    @Inject
+    private Event<EConversationTimedOut> conversationTimedOutBus;
 
     @Getter
     @Setter
@@ -28,6 +38,36 @@ public abstract class AbstractConversationManager implements IConversationManage
     private Map<String, IConversation> conversationMap = new HashMap<>();
 
     private Map<Class<? extends IMessage>, Class<? extends IConversation>> conversationClassMap = new HashMap<>();
+
+    private final Thread garbageCollector = new Thread(() ->
+    {
+        while(true)
+        {
+            synchronized (this)
+            {
+                final List<IConversation> zombies = new LinkedList<>();
+                conversationMap.forEach((id, conversation) ->
+                {
+                    if (conversation.timedOut()) zombies.add(conversation);
+                });
+
+                zombies.forEach(conversation ->
+                {
+                    stopConversation(conversation);
+                    conversationTimedOutBus.fireAsync(new EConversationTimedOut(conversation));
+                });
+            }
+
+            try
+            {
+                Thread.sleep(GARBAGE_COLLECTOR_QUANTUM);
+            }
+            catch (InterruptedException e)
+            {
+                return;
+            }
+        }
+    });
 
     public AbstractConversationManager()
     {
@@ -38,6 +78,9 @@ public abstract class AbstractConversationManager implements IConversationManage
             if (annotatedClass == null) return;
             conversationClassMap.put(((RespondsTo) annotatedClass.getAnnotation()).value(), annotatedClass.getAnnotatedClass());
         });
+
+        garbageCollector.setDaemon(true);
+        garbageCollector.start();
     }
 
     @Override

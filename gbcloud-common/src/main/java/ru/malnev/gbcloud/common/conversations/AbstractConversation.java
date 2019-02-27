@@ -18,6 +18,7 @@ import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -25,9 +26,6 @@ import java.util.UUID;
 public abstract class AbstractConversation implements IConversation
 {
     private static final long DEFAULT_TIMEOUT = 2000000;
-
-    @Inject
-    private Event<EConversationTimedOut> conversationTimedOutBus;
 
     @Inject
     private Event<EConversationFailed> conversationFailedBus;
@@ -45,7 +43,7 @@ public abstract class AbstractConversation implements IConversation
 
     private volatile long lastActivityTime = 0;
 
-    private volatile boolean active = true;
+    private volatile boolean requiresMoreMessages = true;
 
     @Getter
     @Setter
@@ -57,54 +55,31 @@ public abstract class AbstractConversation implements IConversation
     @Getter
     private volatile int messagesReceived = 0;
 
-    //TODO: Запускать отдельный поток, следящий за таймаутом для каждого диалога - не очень эффективное
-    //решение. Лучше сделать один "чистящий" поток в AbstractConversationManager, который будет находить
-    //и вычищать неактивные диалоги a la garbage collector
-    private final Thread timeoutWorker = new Thread(() ->
-    {
-        while (true)
-        {
-            try
-            {
-                Thread.sleep(timeoutMillis);
-                final long delta = System.currentTimeMillis() - lastActivityTime;
-                if (delta >= timeoutMillis)
-                {
-                    getConversationManager().stopConversation(this);
-                    conversationTimedOutBus.fireAsync(new EConversationTimedOut(this));
-                    break;
-                }
-            }
-            catch (InterruptedException e)
-            {
-                break;
-            }
-        }
-    });
+    private Set<Class<? extends IMessage>> expectedMessageClasses = new LinkedHashSet<>();
 
-    private Set<Class<? extends IMessage>> expectedMessages = new LinkedHashSet<>();
-
-    protected synchronized void expectMessage(final @NotNull Class<? extends IMessage> messageClass)
+    @Override
+    public synchronized boolean timedOut()
     {
-        expectedMessages.add(messageClass);
+        final long delta = System.currentTimeMillis() - lastActivityTime;
+        return delta >= timeoutMillis;
     }
 
-    public void continueConversation()
+    public synchronized void continueConversation()
     {
-        active = true;
+        requiresMoreMessages = true;
     }
 
-    protected void beforeStart(final @NotNull IMessage initialMessage)
+    protected synchronized void beforeStart(final @NotNull IMessage initialMessage)
     {
 
     }
 
-    protected void beforeFinish()
+    protected synchronized void beforeFinish()
     {
 
     }
 
-    public void stopConversation()
+    public synchronized void stopConversation()
     {
         getConversationManager().stopConversation(this);
     }
@@ -119,7 +94,7 @@ public abstract class AbstractConversation implements IConversation
 
     @Override
     @SneakyThrows
-    public void init()
+    public synchronized void init()
     {
         //TODO: добавить верификацию this-бина на корректность использования аннотаций @ActiveAgent,
         //@PassiveAgent, @StartsWith, @RespondsTo.
@@ -134,11 +109,11 @@ public abstract class AbstractConversation implements IConversation
         {
             final Expects expectsAnnotation = (Expects) annotatedWithExpects.getAnnotation();
             final Class<? extends IMessage>[] expectedMessages = expectsAnnotation.value();
-            for (final Class<? extends IMessage> expectedMessage : expectedMessages) expectMessage(expectedMessage);
+            expectedMessageClasses.addAll(Arrays.asList(expectedMessages));
         }
 
         lastActivityTime = System.currentTimeMillis();
-        timeoutWorker.start();
+
         messagesSent = 0;
         messagesReceived = 0;
 
@@ -154,15 +129,14 @@ public abstract class AbstractConversation implements IConversation
         {
             final RespondsTo respondsToAnnotation = (RespondsTo) annotatedWithRespondsTo.getAnnotation();
             final Class<? extends IMessage> initialMessageClass = respondsToAnnotation.value();
-            expectMessage(initialMessageClass);
+            expectedMessageClasses.add(initialMessageClass);
         }
     }
 
     @Override
-    public void cleanup()
+    public synchronized void cleanup()
     {
         beforeFinish();
-        timeoutWorker.interrupt();
     }
 
     private final static String PROCESS_MESSAGE_METHOD_NAME = "processMessageFromPeer";
@@ -179,9 +153,9 @@ public abstract class AbstractConversation implements IConversation
             messagesReceived++;
             lastActivityTime = System.currentTimeMillis();
             final Class messageClass = invocationContext.getParameters()[0].getClass();
-            if (expectedMessages.contains(messageClass))
+            if (expectedMessageClasses.contains(messageClass))
             {
-                active = false;
+                requiresMoreMessages = false;
             }
             else if (messageClass.equals(UnexpectedMessageResponse.class) ||
                     messageClass.equals(UnauthorizedResponse.class) ||
@@ -217,7 +191,7 @@ public abstract class AbstractConversation implements IConversation
 
         if (invokedMethodName.equals("processMessageFromPeer"))
         {
-            if(!active)
+            if(!requiresMoreMessages)
             {
                 stopConversation();
                 conversationCompleteBus.fireAsync(new EConversationComplete(this));

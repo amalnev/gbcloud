@@ -34,4 +34,6 @@ public interface IConversation
     void continueConversation();
 
     void stopConversation();
+
+    boolean timedOut();
 }
