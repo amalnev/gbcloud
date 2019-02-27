@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+//TODO: Добавить печать приглашения
 @ApplicationScoped
 public class CLI
 {

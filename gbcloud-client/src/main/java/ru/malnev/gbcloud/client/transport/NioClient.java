@@ -73,7 +73,7 @@ public class NioClient implements INetworkEndpoint
                             }
                             catch (final ITransportChannel.CorruptedDataReceived e)
                             { //ignore
-                                System.out.println("corrupted data");
+
                             }
                             catch (Exception e)
                             {

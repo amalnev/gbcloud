@@ -65,4 +65,9 @@ public class Util
         }
         return new AnnotatedClass(annotation, targetClass);
     }
+
+    public static String getErrorDescription(final @NotNull Exception e)
+    {
+        return e.getClass().getSimpleName() + "[" + e.getMessage() + "]";
+    }
 }
