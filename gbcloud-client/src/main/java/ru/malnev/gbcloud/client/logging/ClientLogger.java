@@ -15,7 +15,6 @@ import ru.malnev.gbcloud.common.transport.ITransportChannel;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
-import java.lang.reflect.Method;
 
 public class ClientLogger extends CommonLogger
 {
@@ -55,18 +54,18 @@ public class ClientLogger extends CommonLogger
             final EAuthFailure event = (EAuthFailure) invocationContext.getParameters()[0];
             write("Authentication failure. Reason: " + event.getReason());
         }
-        else if(HConversationFailed.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
+        else if (HConversationFailed.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
         {
             final EConversationFailed event = (EConversationFailed) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " failed. Reason: " +
                     event.getReason() + ". Remote: " + event.isRemote());
         }
-        else if(HConversationTimedOut.class.isAssignableFrom(targetClass))
+        else if (HConversationTimedOut.class.isAssignableFrom(targetClass))
         {
             final EConversationTimedOut event = (EConversationTimedOut) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " timed out.");
         }
-        else if(HConversationComplete.class.isAssignableFrom(targetClass))
+        else if (HConversationComplete.class.isAssignableFrom(targetClass))
         {
             final EConversationComplete event = (EConversationComplete) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " completed.");

@@ -23,18 +23,18 @@ public abstract class AbstractCommand implements ICommand
     @Override
     public void collectArguments(@Nullable String[] args)
     {
-        if(args != null)
+        if (args != null)
         {
             int i;
-            for(i = 1; i < args.length; i++)
+            for (i = 1; i < args.length; i++)
             {
-                if(i <= arguments.size())
+                if (i <= arguments.size())
                 {
                     arguments.get(i - 1).setValue(args[i]);
                 }
             }
 
-            for(i = args.length - 1; i < arguments.size(); i++)
+            for (i = args.length - 1; i < arguments.size(); i++)
             {
                 final ICommandArgument argument = arguments.get(i);
                 System.out.println("Please type the value for [" + argument.getName() + "]:");

@@ -6,11 +6,10 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.events.EConversationComplete;
 import ru.malnev.gbcloud.common.events.EConversationFailed;
-import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
-import ru.malnev.gbcloud.common.messages.auth.UnauthorizedResponse;
 import ru.malnev.gbcloud.common.messages.UnexpectedMessageResponse;
+import ru.malnev.gbcloud.common.messages.auth.UnauthorizedResponse;
 import ru.malnev.gbcloud.common.utils.Util;
 
 import javax.enterprise.event.Event;
@@ -105,7 +104,7 @@ public abstract class AbstractConversation implements IConversation
         final Util.AnnotatedClass annotatedWithStarts = Util.getAnnotation(StartsWith.class, getClass());
         final Util.AnnotatedClass annotatedWithRespondsTo = Util.getAnnotation(RespondsTo.class, getClass());
 
-        if(annotatedWithExpects != null)
+        if (annotatedWithExpects != null)
         {
             final Expects expectsAnnotation = (Expects) annotatedWithExpects.getAnnotation();
             final Class<? extends IMessage>[] expectedMessages = expectsAnnotation.value();
@@ -117,7 +116,7 @@ public abstract class AbstractConversation implements IConversation
         messagesSent = 0;
         messagesReceived = 0;
 
-        if(annotatedWithStarts != null)
+        if (annotatedWithStarts != null)
         {
             final StartsWith startsWithAnnotation = (StartsWith) annotatedWithStarts.getAnnotation();
             final Class<? extends IMessage> initialMessageClass = startsWithAnnotation.value();
@@ -125,7 +124,7 @@ public abstract class AbstractConversation implements IConversation
             beforeStart(initialMessage);
             sendMessageToPeer(initialMessage);
         }
-        else if(annotatedWithRespondsTo != null)
+        else if (annotatedWithRespondsTo != null)
         {
             final RespondsTo respondsToAnnotation = (RespondsTo) annotatedWithRespondsTo.getAnnotation();
             final Class<? extends IMessage> initialMessageClass = respondsToAnnotation.value();
@@ -164,15 +163,15 @@ public abstract class AbstractConversation implements IConversation
                 stopConversation();
                 final EConversationFailed event = new EConversationFailed(this);
                 event.setRemote(true);
-                if(messageClass.equals(UnexpectedMessageResponse.class))
+                if (messageClass.equals(UnexpectedMessageResponse.class))
                 {
                     event.setReason(UNEXPECTED_MESSAGE_REASON);
                 }
-                else if(messageClass.equals(UnauthorizedResponse.class))
+                else if (messageClass.equals(UnauthorizedResponse.class))
                 {
                     event.setReason(UNAUTHORIZED_REASON);
                 }
-                else if(messageClass.equals(ServerErrorResponse.class))
+                else if (messageClass.equals(ServerErrorResponse.class))
                 {
                     final ServerErrorResponse response = (ServerErrorResponse) invocationContext.getParameters()[0];
                     event.setReason(response.getReason());
@@ -191,7 +190,7 @@ public abstract class AbstractConversation implements IConversation
 
         if (invokedMethodName.equals("processMessageFromPeer"))
         {
-            if(!requiresMoreMessages)
+            if (!requiresMoreMessages)
             {
                 stopConversation();
                 conversationCompleteBus.fireAsync(new EConversationComplete(this));

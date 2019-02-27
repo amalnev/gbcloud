@@ -14,7 +14,7 @@ import ru.malnev.gbcloud.common.messages.pwd.PwdResponse;
 @Expects(PwdResponse.class)
 public class PwdClientAgent extends AbstractConversation
 {
-     @Override
+    @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
         final PwdResponse response = (PwdResponse) message;

@@ -16,7 +16,6 @@ import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 import ru.malnev.gbcloud.common.transport.Netty;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 
@@ -78,8 +77,8 @@ public class NettyClient implements INetworkEndpoint
     @SneakyThrows
     public void stop()
     {
-        if(channelFuture != null) channelFuture.channel().close();
-        if(workerThread != null) workerThread.join();
+        if (channelFuture != null) channelFuture.channel().close();
+        if (workerThread != null) workerThread.join();
         channelFuture = null;
         workerThread = null;
     }

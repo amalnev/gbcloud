@@ -3,7 +3,6 @@ package ru.malnev.gbcloud.client.command;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.client.config.ClientConfig;
 import ru.malnev.gbcloud.common.filesystem.PathDoesNotExistException;
@@ -24,7 +23,7 @@ public class CLI
 {
     private static final String UNRECOGNIZED_COMMAND_MESSAGE = "Unrecognized command";
 
-    private static class EConsoleInputRequired{}
+    private static class EConsoleInputRequired {}
 
     @AllArgsConstructor
     private static class EConsoleInputReceived
@@ -64,7 +63,7 @@ public class CLI
         final ICommand command = parser.parse(event.getLine());
         try
         {
-            if(command != null)
+            if (command != null)
             {
                 command.run();
             }
@@ -78,7 +77,7 @@ public class CLI
             e.printStackTrace();
         }
 
-        if(active)
+        if (active)
         {
             consoleInputRequired.fire(new EConsoleInputRequired());
         }
@@ -97,11 +96,11 @@ public class CLI
 
     public void cd(final @NotNull String path) throws PathDoesNotExistException, PathIsNotADirectoryException
     {
-        if(path.length() == 0) return;
+        if (path.length() == 0) return;
         Path newPath = Paths.get(path).normalize();
-        if(!newPath.isAbsolute()) newPath = currentDirectory.resolve(newPath);
-        if(!Files.exists(newPath)) throw new PathDoesNotExistException();
-        if(!Files.isDirectory(newPath)) throw new PathIsNotADirectoryException();
+        if (!newPath.isAbsolute()) newPath = currentDirectory.resolve(newPath);
+        if (!Files.exists(newPath)) throw new PathDoesNotExistException();
+        if (!Files.isDirectory(newPath)) throw new PathIsNotADirectoryException();
         currentDirectory = newPath.normalize();
     }
 }

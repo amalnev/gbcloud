@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.common.bootstrap.Bootstrap;
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
-import ru.malnev.gbcloud.common.transport.Netty;
 import ru.malnev.gbcloud.common.utils.Util;
 import ru.malnev.gbcloud.server.config.ServerConfig;
 import ru.malnev.gbcloud.server.persistence.entitites.User;

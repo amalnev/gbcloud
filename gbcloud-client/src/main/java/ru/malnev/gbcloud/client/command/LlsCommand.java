@@ -35,7 +35,7 @@ public class LlsCommand extends AbstractCommand
                 builder.append(element.getName(element.getNameCount() - 1).toString());
                 System.out.println(builder.toString());
             }
-            catch (IOException e){}
+            catch (IOException e) {}
         });
     }
 }

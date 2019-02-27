@@ -9,7 +9,7 @@ import javax.enterprise.util.AnnotationLiteral;
 @Description(Const.HELP_COMMAND_DESCRIPTION)
 public class HelpCommand extends AbstractCommand
 {
-    private static final AnnotationLiteral<Command> COMMAND_ANNOTATION = new AnnotationLiteral<Command>(){};
+    private static final AnnotationLiteral<Command> COMMAND_ANNOTATION = new AnnotationLiteral<Command>() {};
 
     @Override
     public void run()
@@ -23,14 +23,14 @@ public class HelpCommand extends AbstractCommand
             final Util.AnnotatedClass annotatedWithDescription = Util.getAnnotation(Description.class, commandBean.getClass());
             final Util.AnnotatedClass annotatedWithArguments = Util.getAnnotation(Arguments.class, commandBean.getClass());
 
-            if(annotatedWithKeyword == null) return;
+            if (annotatedWithKeyword == null) return;
             final Keyword keywordAnnotation = (Keyword) annotatedWithKeyword.getAnnotation();
             builder.append(keywordAnnotation.value());
             builder.append(" ");
-            if(annotatedWithArguments != null)
+            if (annotatedWithArguments != null)
             {
                 final Arguments argumentsAnnotation = (Arguments) annotatedWithArguments.getAnnotation();
-                for(final String argumentName : argumentsAnnotation.value())
+                for (final String argumentName : argumentsAnnotation.value())
                 {
                     builder.append("<");
                     builder.append(argumentName);
@@ -38,7 +38,7 @@ public class HelpCommand extends AbstractCommand
                 }
             }
 
-            if(annotatedWithDescription != null)
+            if (annotatedWithDescription != null)
             {
                 final Description descriptionAnnotation = (Description) annotatedWithDescription.getAnnotation();
                 builder.append("- ");

@@ -22,7 +22,7 @@ public class LsClientAgent extends AbstractConversation
         response.getElements().forEach(element ->
         {
             final StringBuilder builder = new StringBuilder();
-            if(element.isDirectory())
+            if (element.isDirectory())
             {
                 builder.append("<DIR>\t\t");
             }

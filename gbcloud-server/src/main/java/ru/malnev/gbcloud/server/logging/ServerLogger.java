@@ -44,18 +44,18 @@ public class ServerLogger extends CommonLogger
                     " was received from " +
                     remoteAddress);
         }
-        else if(HConversationFailed.class.isAssignableFrom(targetClass))
+        else if (HConversationFailed.class.isAssignableFrom(targetClass))
         {
             final EConversationFailed event = (EConversationFailed) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " failed. Reason: " +
                     event.getReason() + ". Remote: " + event.isRemote());
         }
-        else if(HConversationTimedOut.class.isAssignableFrom(targetClass))
+        else if (HConversationTimedOut.class.isAssignableFrom(targetClass))
         {
             final EConversationTimedOut event = (EConversationTimedOut) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " timed out.");
         }
-        else if(HConversationComplete.class.isAssignableFrom(targetClass))
+        else if (HConversationComplete.class.isAssignableFrom(targetClass))
         {
             final EConversationComplete event = (EConversationComplete) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " completed.");

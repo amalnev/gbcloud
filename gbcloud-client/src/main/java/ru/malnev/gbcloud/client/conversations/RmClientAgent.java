@@ -8,8 +8,8 @@ import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.conversations.Expects;
 import ru.malnev.gbcloud.common.conversations.StartsWith;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.messages.rm.RmRequest;
 import ru.malnev.gbcloud.common.messages.ServerOkResponse;
+import ru.malnev.gbcloud.common.messages.rm.RmRequest;
 
 @ActiveAgent
 @StartsWith(RmRequest.class)

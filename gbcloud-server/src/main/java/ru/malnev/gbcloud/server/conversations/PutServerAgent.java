@@ -6,7 +6,7 @@ import ru.malnev.gbcloud.common.conversations.Expects;
 import ru.malnev.gbcloud.common.conversations.FileTransferReceivingAgent;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
 import ru.malnev.gbcloud.common.events.EFileTransferFailed;
-import ru.malnev.gbcloud.common.messages.*;
+import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.transfer.FileDataRequest;
 import ru.malnev.gbcloud.common.messages.transfer.FileTransferError;
 import ru.malnev.gbcloud.common.messages.transfer.FileTransferReady;
@@ -36,7 +36,7 @@ public class PutServerAgent extends ServerAgent
     @SneakyThrows
     public void processMessageFromPeer(@NotNull IMessage message)
     {
-        if(message instanceof PutRequest)
+        if (message instanceof PutRequest)
         {
             final PutRequest request = (PutRequest) message;
             try
@@ -45,7 +45,7 @@ public class PutServerAgent extends ServerAgent
                 sendMessageToPeer(new FileTransferReady());
                 continueConversation();
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 sendMessageToPeer(new FileTransferError(e.getMessage()));
                 final EFileTransferFailed event = new EFileTransferFailed(this);

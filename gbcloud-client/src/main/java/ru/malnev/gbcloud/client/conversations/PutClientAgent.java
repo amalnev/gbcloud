@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.*;
-import ru.malnev.gbcloud.common.messages.*;
+import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.transfer.FileDataAcceptedResponse;
 import ru.malnev.gbcloud.common.messages.transfer.FileTransferError;
 import ru.malnev.gbcloud.common.messages.transfer.FileTransferReady;

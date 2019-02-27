@@ -30,7 +30,7 @@ public class PutCommand extends AbstractCommand
     {
         final String fileName = getArgumentValue(Const.TARGET_FILE_ARGUMENT_NAME);
         final Path filePath = cli.getCurrentDirectory().resolve(fileName);
-        if(!Files.exists(filePath))
+        if (!Files.exists(filePath))
         {
             System.out.println(PATH_DOES_NOT_EXIST_MESSAGE);
             return;

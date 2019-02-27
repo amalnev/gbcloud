@@ -118,6 +118,6 @@ public class NioClient implements INetworkEndpoint
     {
         if (selector.isOpen()) selector.close();
         transportChannel.closeSilently();
-        if(workerThread != null) workerThread.join();
+        if (workerThread != null) workerThread.join();
     }
 }

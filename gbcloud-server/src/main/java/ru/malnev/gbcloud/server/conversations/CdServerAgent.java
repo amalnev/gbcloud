@@ -4,10 +4,10 @@ import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
 import ru.malnev.gbcloud.common.filesystem.PathDoesNotExistException;
 import ru.malnev.gbcloud.common.filesystem.PathIsNotADirectoryException;
-import ru.malnev.gbcloud.common.messages.cd.CdFailResponse;
-import ru.malnev.gbcloud.common.messages.cd.CdRequest;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ServerOkResponse;
+import ru.malnev.gbcloud.common.messages.cd.CdFailResponse;
+import ru.malnev.gbcloud.common.messages.cd.CdRequest;
 import ru.malnev.gbcloud.server.filesystem.ServerDirectory;
 
 import javax.inject.Inject;
@@ -47,7 +47,7 @@ public class CdServerAgent extends ServerAgent
             failureReason = PATH_ABSOLUTE_MESSAGE;
         }
 
-        if(failureReason != null)
+        if (failureReason != null)
         {
             failResponse.setReason(failureReason);
             sendMessageToPeer(failResponse);

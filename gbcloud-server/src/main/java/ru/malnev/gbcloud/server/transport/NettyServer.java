@@ -17,7 +17,6 @@ import ru.malnev.gbcloud.common.transport.Netty;
 import ru.malnev.gbcloud.server.config.ServerConfig;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 

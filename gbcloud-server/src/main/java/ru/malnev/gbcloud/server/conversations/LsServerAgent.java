@@ -2,7 +2,8 @@ package ru.malnev.gbcloud.server.conversations;
 
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
-import ru.malnev.gbcloud.common.messages.*;
+import ru.malnev.gbcloud.common.messages.IMessage;
+import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
 import ru.malnev.gbcloud.common.messages.ls.LsRequest;
 import ru.malnev.gbcloud.common.messages.ls.LsResponse;
 

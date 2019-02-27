@@ -24,14 +24,14 @@ public class LcdCommand extends AbstractCommand
         try
         {
             final String path = getArgumentValue(TARGET_DIRECTORY_ARGUMENT_NAME);
-            if(path == null) return;
+            if (path == null) return;
             cli.cd(path);
         }
         catch (PathDoesNotExistException e)
         {
             System.out.println(PATH_DOES_NOT_EXIST_MESSAGE);
         }
-        catch(PathIsNotADirectoryException e)
+        catch (PathIsNotADirectoryException e)
         {
             System.out.println(PATH_IS_NOT_A_DIR_MESSAGE);
         }

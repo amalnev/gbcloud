@@ -4,19 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import ru.malnev.gbcloud.common.config.CommonConfig;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
 import ru.malnev.gbcloud.common.messages.IMessage;
 
-import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
 
 @Nio
 @Interceptors(CommonLogger.class)
@@ -100,15 +94,15 @@ public class NioTransportChannel implements ITransportChannel
         int bytesRead = 0;
         final long startTime = System.currentTimeMillis();
         final long quantum = READ_QUANTUM;
-        while(bytesRead < bytesToRead)
+        while (bytesRead < bytesToRead)
         {
             bytesRead += socketChannel.read(readBuffer);
-            if(bytesRead < 0)
+            if (bytesRead < 0)
             {
                 socketChannel.close();
                 throw new RemoteEndGone();
             }
-            if(bytesRead >= bytesToRead) break;
+            if (bytesRead >= bytesToRead) break;
 
             try
             {
@@ -119,7 +113,7 @@ public class NioTransportChannel implements ITransportChannel
                 break;
             }
             final long delta = System.currentTimeMillis() - startTime;
-            if(delta > MESSAGE_TIMEOUT) break;
+            if (delta > MESSAGE_TIMEOUT) break;
         }
 
         //если дописать буфер хотя бы до требуемого размера не получилось, завершаем.
@@ -234,7 +228,7 @@ public class NioTransportChannel implements ITransportChannel
     public int getMTU()
     {
         //return 10240;
-        return (int)(0.75f * MAXIMUM_OBJECT_SIZE);
+        return (int) (0.75f * MAXIMUM_OBJECT_SIZE);
     }
 
     @Override

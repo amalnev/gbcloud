@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.events.EFileTransferFailed;
 import ru.malnev.gbcloud.common.filesystem.IFileWriter;
-import ru.malnev.gbcloud.common.messages.*;
+import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.transfer.FileDataAcceptedResponse;
 import ru.malnev.gbcloud.common.messages.transfer.FileDataRequest;
 import ru.malnev.gbcloud.common.messages.transfer.FileTransferError;
@@ -52,7 +52,7 @@ public class FileTransferReceivingAgent
     {
         try
         {
-            if(message instanceof FileTransferError)
+            if (message instanceof FileTransferError)
             {
                 final FileTransferError errorMessage = (FileTransferError) message;
                 final EFileTransferFailed event = new EFileTransferFailed(conversation);
@@ -67,7 +67,7 @@ public class FileTransferReceivingAgent
             final FileDataAcceptedResponse response = new FileDataAcceptedResponse();
             response.setCseq(request.getCseq());
             conversation.sendMessageToPeer(response);
-            if(!request.isLast()) conversation.continueConversation();
+            if (!request.isLast()) conversation.continueConversation();
         }
         catch (IOException e)
         {

@@ -5,9 +5,7 @@ import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 
 import javax.inject.Inject;
 
-import static ru.malnev.gbcloud.client.command.Const.LOGIN_ARGUMENT_NAME;
-import static ru.malnev.gbcloud.client.command.Const.PASSWORD_ARGUMENT_NAME;
-import static ru.malnev.gbcloud.client.command.Const.SERVER_ARGUMENT_NAME;
+import static ru.malnev.gbcloud.client.command.Const.*;
 
 @Keyword(Const.OPEN_COMMAND_KEYWORD)
 @Description(Const.OPEN_COMMAND_DESCRIPTION)

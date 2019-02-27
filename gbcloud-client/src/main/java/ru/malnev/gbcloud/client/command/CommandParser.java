@@ -1,7 +1,6 @@
 package ru.malnev.gbcloud.client.command;
 
 import org.jetbrains.annotations.Nullable;
-import ru.malnev.gbcloud.common.conversations.RespondsTo;
 import ru.malnev.gbcloud.common.utils.Util;
 
 import javax.annotation.PostConstruct;
@@ -14,7 +13,7 @@ import java.util.Map;
 @ApplicationScoped
 public class CommandParser implements ICommandParser
 {
-    private static final AnnotationLiteral<Command> COMMAND_ANNOTATION = new AnnotationLiteral<Command>(){};
+    private static final AnnotationLiteral<Command> COMMAND_ANNOTATION = new AnnotationLiteral<Command>() {};
 
     private final Map<String, Class<? extends ICommand>> commandMap = new HashMap<>();
 
@@ -44,11 +43,11 @@ public class CommandParser implements ICommandParser
 
         final ICommand commandObject = CDI.current().select(commandMap.get(keyword), COMMAND_ANNOTATION).get();
         final Util.AnnotatedClass annotatedClass = Util.getAnnotation(Arguments.class, commandObject.getClass());
-        if(annotatedClass != null)
+        if (annotatedClass != null)
         {
             final Arguments argumentsAnnotation = (Arguments) annotatedClass.getAnnotation();
             final String[] argumentNames = argumentsAnnotation.value();
-            for(final String argumentName : argumentNames)
+            for (final String argumentName : argumentNames)
                 commandObject.getArguments().add(new Argument(argumentName, null));
         }
         commandObject.collectArguments(words);

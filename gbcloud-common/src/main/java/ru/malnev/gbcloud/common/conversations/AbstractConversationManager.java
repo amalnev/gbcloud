@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
@@ -20,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public abstract class AbstractConversationManager implements IConversationManager
 {
@@ -41,7 +39,7 @@ public abstract class AbstractConversationManager implements IConversationManage
 
     private final Thread garbageCollector = new Thread(() ->
     {
-        while(true)
+        while (true)
         {
             synchronized (this)
             {
@@ -136,9 +134,9 @@ public abstract class AbstractConversationManager implements IConversationManage
             //об ошибке на удаленную сторону.
 
             final String conversationId = message.getConversationId();
-            if(conversationId == null) return;
+            if (conversationId == null) return;
             final IConversation failedConversation = conversationMap.get(conversationId);
-            if(failedConversation != null) stopConversation(failedConversation);
+            if (failedConversation != null) stopConversation(failedConversation);
             try
             {
                 final String errorDescription = Util.getErrorDescription(e);
@@ -164,7 +162,7 @@ public abstract class AbstractConversationManager implements IConversationManage
     @SneakyThrows
     public synchronized void startConversation(@NotNull IConversation conversation)
     {
-        if(getTransportChannel() == null) throw new Exception();
+        if (getTransportChannel() == null) throw new Exception();
         conversationMap.put(conversation.getId(), conversation);
         conversation.setConversationManager(this);
         conversation.init();

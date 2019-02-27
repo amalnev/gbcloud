@@ -8,10 +8,10 @@ import ru.malnev.gbcloud.common.conversations.AbstractConversation;
 import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.conversations.Expects;
 import ru.malnev.gbcloud.common.conversations.StartsWith;
+import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.auth.AuthFailResponse;
 import ru.malnev.gbcloud.common.messages.auth.AuthMessage;
 import ru.malnev.gbcloud.common.messages.auth.AuthSuccessResponse;
-import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.utils.Util;
 
 import javax.enterprise.event.Event;

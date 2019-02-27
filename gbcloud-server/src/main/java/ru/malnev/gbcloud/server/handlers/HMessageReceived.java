@@ -1,6 +1,5 @@
 package ru.malnev.gbcloud.server.handlers;
 
-import ru.malnev.gbcloud.common.conversations.IConversationManager;
 import ru.malnev.gbcloud.common.messages.auth.AuthMessage;
 import ru.malnev.gbcloud.common.messages.auth.UnauthorizedResponse;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;

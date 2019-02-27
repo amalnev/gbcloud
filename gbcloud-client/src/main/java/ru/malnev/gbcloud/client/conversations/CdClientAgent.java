@@ -7,10 +7,10 @@ import ru.malnev.gbcloud.common.conversations.AbstractConversation;
 import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.conversations.Expects;
 import ru.malnev.gbcloud.common.conversations.StartsWith;
-import ru.malnev.gbcloud.common.messages.cd.CdFailResponse;
-import ru.malnev.gbcloud.common.messages.cd.CdRequest;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ServerOkResponse;
+import ru.malnev.gbcloud.common.messages.cd.CdFailResponse;
+import ru.malnev.gbcloud.common.messages.cd.CdRequest;
 
 @ActiveAgent
 @StartsWith(CdRequest.class)
@@ -33,7 +33,7 @@ public class CdClientAgent extends AbstractConversation
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
-        if(message instanceof CdFailResponse)
+        if (message instanceof CdFailResponse)
         {
             final CdFailResponse cdFailResponse = (CdFailResponse) message;
             System.out.println(FAIL_MESSAGE + cdFailResponse.getReason());

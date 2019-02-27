@@ -1,11 +1,9 @@
 package ru.malnev.gbcloud.server.filesystem;
 
 import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import ru.malnev.gbcloud.common.filesystem.PathIsNotADirectoryException;
 import ru.malnev.gbcloud.common.filesystem.PathDoesNotExistException;
+import ru.malnev.gbcloud.common.filesystem.PathIsNotADirectoryException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,12 +29,12 @@ public class ServerDirectory
             PathIsNotADirectoryException
     {
         final Path newPath = currentDirectory.resolve(path).normalize();
-        if(!newPath.startsWith(rootDirectory))
+        if (!newPath.startsWith(rootDirectory))
         {
             currentDirectory = rootDirectory;
         }
-        if(!Files.exists(newPath)) throw new PathDoesNotExistException();
-        if(!Files.isDirectory(newPath)) throw new PathIsNotADirectoryException();
+        if (!Files.exists(newPath)) throw new PathDoesNotExistException();
+        if (!Files.isDirectory(newPath)) throw new PathIsNotADirectoryException();
         currentDirectory = newPath;
     }
 
@@ -45,7 +43,7 @@ public class ServerDirectory
             PathDoesNotExistException
     {
         final Path newPath = Paths.get(path);
-        if(newPath.isAbsolute()) throw new AbsolutePathException();
+        if (newPath.isAbsolute()) throw new AbsolutePathException();
         cd(newPath);
     }
 

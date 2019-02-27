@@ -2,10 +2,10 @@ package ru.malnev.gbcloud.server.conversations;
 
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
+import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.auth.AuthFailResponse;
 import ru.malnev.gbcloud.common.messages.auth.AuthMessage;
 import ru.malnev.gbcloud.common.messages.auth.AuthSuccessResponse;
-import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.server.persistence.entitites.User;
 import ru.malnev.gbcloud.server.persistence.repositories.UserRepository;
 

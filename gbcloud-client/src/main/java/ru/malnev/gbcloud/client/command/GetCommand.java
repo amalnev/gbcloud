@@ -3,7 +3,6 @@ package ru.malnev.gbcloud.client.command;
 import ru.malnev.gbcloud.client.conversations.ClientConversationManager;
 import ru.malnev.gbcloud.client.conversations.GetClientAgent;
 import ru.malnev.gbcloud.common.conversations.ActiveAgent;
-import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 
 import javax.inject.Inject;
 

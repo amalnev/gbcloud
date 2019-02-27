@@ -1,13 +1,7 @@
 package ru.malnev.gbcloud.common.filesystem;
 
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +24,7 @@ public class NioFileReader extends NioFile implements IFileReader
     public byte[] read(int bytesToRead) throws IOException
     {
         //TODO: Уточнить исключение.
-        if(bytesToRead > FILE_BUFFER_CAPACITY) throw new IOException();
+        if (bytesToRead > FILE_BUFFER_CAPACITY) throw new IOException();
 
         //Изначально буфер находится в режиме записи
 
@@ -52,7 +46,7 @@ public class NioFileReader extends NioFile implements IFileReader
                 while (bytesRead < bytesNeeded)
                 {
                     bytesRead += byteChannel.read(fileBuffer);
-                    if(bytesRead < 0) break;
+                    if (bytesRead < 0) break;
                 }
 
                 //в данный момент у нас в буфере либо есть запрошенное
@@ -64,7 +58,7 @@ public class NioFileReader extends NioFile implements IFileReader
             final int bytesInBuffer = fileBuffer.remaining();
             final int bytesToReturn = bytesInBuffer < bytesToRead ? bytesInBuffer : bytesToRead;
             final byte[] result = new byte[bytesToReturn];
-            if(bytesToReturn > 0) fileBuffer.get(result);
+            if (bytesToReturn > 0) fileBuffer.get(result);
             return result;
         }
         finally

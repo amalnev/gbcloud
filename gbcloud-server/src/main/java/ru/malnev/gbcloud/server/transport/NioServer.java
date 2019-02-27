@@ -2,7 +2,10 @@ package ru.malnev.gbcloud.server.transport;
 
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.transport.*;
+import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
+import ru.malnev.gbcloud.common.transport.ITransportChannel;
+import ru.malnev.gbcloud.common.transport.Nio;
+import ru.malnev.gbcloud.common.transport.NioTransportChannel;
 import ru.malnev.gbcloud.server.config.ServerConfig;
 import ru.malnev.gbcloud.server.conversations.ServerConversationManager;
 import ru.malnev.gbcloud.server.events.EClientConnected;
