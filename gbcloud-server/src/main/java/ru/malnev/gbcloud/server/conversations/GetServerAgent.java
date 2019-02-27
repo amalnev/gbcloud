@@ -5,8 +5,10 @@ import ru.malnev.gbcloud.common.conversations.Expects;
 import ru.malnev.gbcloud.common.conversations.FileTransferSendingAgent;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
 import ru.malnev.gbcloud.common.events.EFileTransferFailed;
-import ru.malnev.gbcloud.common.filesystem.IFileReader;
 import ru.malnev.gbcloud.common.messages.*;
+import ru.malnev.gbcloud.common.messages.transfer.FileDataAcceptedResponse;
+import ru.malnev.gbcloud.common.messages.transfer.FileTransferError;
+import ru.malnev.gbcloud.common.messages.transfer.GetRequest;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;

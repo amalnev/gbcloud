@@ -1,9 +1,10 @@
-package ru.malnev.gbcloud.common.messages;
+package ru.malnev.gbcloud.common.messages.ls;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import ru.malnev.gbcloud.common.messages.AbstractMessage;
 import ru.malnev.gbcloud.common.utils.Util;
 
 import java.io.Serializable;

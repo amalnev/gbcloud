@@ -3,7 +3,7 @@ package ru.malnev.gbcloud.server.conversations;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.messages.MkdirRequest;
+import ru.malnev.gbcloud.common.messages.mkdir.MkdirRequest;
 import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
 import ru.malnev.gbcloud.common.messages.ServerOkResponse;
 

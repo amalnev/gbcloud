@@ -1,9 +1,10 @@
-package ru.malnev.gbcloud.common.messages;
+package ru.malnev.gbcloud.common.messages.pwd;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.malnev.gbcloud.common.messages.AbstractMessage;
 
 import java.util.LinkedList;
 import java.util.List;

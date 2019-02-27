@@ -13,9 +13,4 @@ public interface IMessage extends Serializable
     String getConversationId();
 
     void setConversationId(@NotNull String conversationId);
-
-    @NotNull
-    MessageType getType();
-
-    void setType(@NotNull MessageType type);
 }

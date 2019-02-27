@@ -5,9 +5,9 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.events.EFileTransferFailed;
 import ru.malnev.gbcloud.common.filesystem.IFileReader;
-import ru.malnev.gbcloud.common.messages.FileDataAcceptedResponse;
-import ru.malnev.gbcloud.common.messages.FileDataRequest;
-import ru.malnev.gbcloud.common.messages.FileTransferError;
+import ru.malnev.gbcloud.common.messages.transfer.FileDataAcceptedResponse;
+import ru.malnev.gbcloud.common.messages.transfer.FileDataRequest;
+import ru.malnev.gbcloud.common.messages.transfer.FileTransferError;
 import ru.malnev.gbcloud.common.messages.IMessage;
 
 import javax.enterprise.event.Event;

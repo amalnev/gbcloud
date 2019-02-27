@@ -7,12 +7,10 @@ import ru.malnev.gbcloud.common.conversations.AbstractConversation;
 import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.conversations.Expects;
 import ru.malnev.gbcloud.common.conversations.StartsWith;
-import ru.malnev.gbcloud.common.messages.CdFailResponse;
-import ru.malnev.gbcloud.common.messages.CdRequest;
+import ru.malnev.gbcloud.common.messages.cd.CdFailResponse;
+import ru.malnev.gbcloud.common.messages.cd.CdRequest;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ServerOkResponse;
-
-import javax.inject.Inject;
 
 @ActiveAgent
 @StartsWith(CdRequest.class)

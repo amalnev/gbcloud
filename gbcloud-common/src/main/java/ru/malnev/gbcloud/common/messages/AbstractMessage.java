@@ -12,9 +12,5 @@ public abstract class AbstractMessage implements IMessage
 
     @Getter
     @Setter
-    private MessageType type;
-
-    @Getter
-    @Setter
     private String conversationId;
 }

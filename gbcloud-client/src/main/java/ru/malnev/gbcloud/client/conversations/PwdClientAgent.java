@@ -5,13 +5,9 @@ import ru.malnev.gbcloud.common.conversations.AbstractConversation;
 import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.conversations.Expects;
 import ru.malnev.gbcloud.common.conversations.StartsWith;
-import ru.malnev.gbcloud.common.events.EConversationComplete;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.messages.PwdRequest;
-import ru.malnev.gbcloud.common.messages.PwdResponse;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
+import ru.malnev.gbcloud.common.messages.pwd.PwdRequest;
+import ru.malnev.gbcloud.common.messages.pwd.PwdResponse;
 
 @ActiveAgent
 @StartsWith(PwdRequest.class)

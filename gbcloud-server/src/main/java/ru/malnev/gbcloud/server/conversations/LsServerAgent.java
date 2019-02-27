@@ -1,14 +1,13 @@
 package ru.malnev.gbcloud.server.conversations;
 
 import org.jetbrains.annotations.NotNull;
-import ru.malnev.gbcloud.common.conversations.PassiveAgent;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
 import ru.malnev.gbcloud.common.messages.*;
+import ru.malnev.gbcloud.common.messages.ls.LsRequest;
+import ru.malnev.gbcloud.common.messages.ls.LsResponse;
 
 import javax.inject.Inject;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @RespondsTo(LsRequest.class)
 public class LsServerAgent extends ServerAgent

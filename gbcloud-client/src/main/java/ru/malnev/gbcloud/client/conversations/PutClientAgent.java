@@ -5,13 +5,13 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.*;
-import ru.malnev.gbcloud.common.events.EFileTransferFailed;
-import ru.malnev.gbcloud.common.filesystem.IFileReader;
 import ru.malnev.gbcloud.common.messages.*;
+import ru.malnev.gbcloud.common.messages.transfer.FileDataAcceptedResponse;
+import ru.malnev.gbcloud.common.messages.transfer.FileTransferError;
+import ru.malnev.gbcloud.common.messages.transfer.FileTransferReady;
+import ru.malnev.gbcloud.common.messages.transfer.PutRequest;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import java.io.IOException;
 import java.nio.file.Path;
 
 @ActiveAgent

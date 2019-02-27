@@ -2,12 +2,10 @@ package ru.malnev.gbcloud.server.conversations;
 
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.conversations.RespondsTo;
-import ru.malnev.gbcloud.common.events.EConversationComplete;
 import ru.malnev.gbcloud.common.messages.IMessage;
-import ru.malnev.gbcloud.common.messages.PwdRequest;
-import ru.malnev.gbcloud.common.messages.PwdResponse;
+import ru.malnev.gbcloud.common.messages.pwd.PwdRequest;
+import ru.malnev.gbcloud.common.messages.pwd.PwdResponse;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 @RespondsTo(PwdRequest.class)

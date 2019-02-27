@@ -9,7 +9,7 @@ import ru.malnev.gbcloud.common.events.EConversationFailed;
 import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
-import ru.malnev.gbcloud.common.messages.UnauthorizedResponse;
+import ru.malnev.gbcloud.common.messages.auth.UnauthorizedResponse;
 import ru.malnev.gbcloud.common.messages.UnexpectedMessageResponse;
 import ru.malnev.gbcloud.common.utils.Util;
 

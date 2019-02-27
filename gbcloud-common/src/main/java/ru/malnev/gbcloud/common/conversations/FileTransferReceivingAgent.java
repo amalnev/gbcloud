@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.events.EFileTransferFailed;
 import ru.malnev.gbcloud.common.filesystem.IFileWriter;
 import ru.malnev.gbcloud.common.messages.*;
+import ru.malnev.gbcloud.common.messages.transfer.FileDataAcceptedResponse;
+import ru.malnev.gbcloud.common.messages.transfer.FileDataRequest;
+import ru.malnev.gbcloud.common.messages.transfer.FileTransferError;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
