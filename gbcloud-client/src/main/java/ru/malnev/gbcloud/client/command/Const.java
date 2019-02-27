@@ -16,6 +16,8 @@ class Const
     public static final String HELP_COMMAND_KEYWORD = "help";
     public static final String PUT_COMMAND_KEYWORD = "put";
     public static final String GET_COMMAND_KEYWORD = "get";
+    public static final String RMKDIR_COMMAND_KEYWORD = "rmkdir";
+    public static final String RRM_COMMAND_KEYWORD = "rrm";
 
     //command argument names
     public static final String SERVER_ARGUMENT_NAME = "Host";
@@ -23,6 +25,7 @@ class Const
     public static final String PASSWORD_ARGUMENT_NAME = "Password";
     public final static String TARGET_DIRECTORY_ARGUMENT_NAME = "Target directory";
     public final static String TARGET_FILE_ARGUMENT_NAME = "Target file";
+    public final static String TARGET_PATH_ARGUMENT_NAME = "Target path";
 
     //command descriptions
     public static final String CLOSE_COMMAND_DESCRIPTION = "Close connection to server.";
@@ -38,4 +41,6 @@ class Const
     public static final String HELP_COMMAND_DESCRIPTION = "Display help";
     public static final String PUT_COMMAND_DESCRIPTION = "Upload a file to the server.";
     public static final String GET_COMMAND_DESCRIPTION = "Downloads a file from the server.";
+    public static final String RMKDIR_COMMAND_DESCRIPTION = "Creates a directory on the server.";
+    public static final String RRM_COMMAND_DESCRIPTION = "Deletes a file or directory on the server.";
 }

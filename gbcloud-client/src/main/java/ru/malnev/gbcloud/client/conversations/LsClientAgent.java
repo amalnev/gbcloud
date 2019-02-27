@@ -22,6 +22,7 @@ public class LsClientAgent extends AbstractConversation
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
+        //TODO: исправить порядок вывода элементов в консоль - сначала директории, потом файлы
         final LsResponse response = (LsResponse) message;
         response.getElements().forEach(element ->
         {
