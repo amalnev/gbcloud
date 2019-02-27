@@ -18,14 +18,17 @@ public class CommonConfig extends OptionRepository
 {
     private static final String SERVER_PORT_OPTION_NAME = "ServerPort";
     private static final String DIAG_MODE_OPTION_NAME = "DiagMode";
+    private static final String LOGGING_OPTION_NAME = "Logging";
 
     private static final int DEFAULT_SERVER_PORT = 9999;
     private static final boolean DEFAULT_DIAG_MODE = false;
+    private static final boolean DEFAULT_LOGGING = false;
 
     public CommonConfig()
     {
         addAllowedOption(new IntegerOption(SERVER_PORT_OPTION_NAME, DEFAULT_SERVER_PORT));
         addAllowedOption(new BooleanOption(DIAG_MODE_OPTION_NAME, DEFAULT_DIAG_MODE));
+        addAllowedOption(new BooleanOption(LOGGING_OPTION_NAME, DEFAULT_LOGGING));
     }
 
     protected String getStringOption(final @NotNull String name)
@@ -91,6 +94,16 @@ public class CommonConfig extends OptionRepository
     public void setDiagMode(final boolean value)
     {
         setBooleanOption(DIAG_MODE_OPTION_NAME, value, DEFAULT_DIAG_MODE);
+    }
+
+    public boolean isLoggingEnabled()
+    {
+        return getBooleanOption(LOGGING_OPTION_NAME);
+    }
+
+    public void setLoggingEnabled(final boolean value)
+    {
+        setBooleanOption(LOGGING_OPTION_NAME, value, DEFAULT_LOGGING);
     }
 
     /**

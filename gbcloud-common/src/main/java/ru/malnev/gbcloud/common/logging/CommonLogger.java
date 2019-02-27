@@ -28,8 +28,8 @@ public class CommonLogger
 
     protected void write(final @NotNull String line)
     {
-        //logger.info(now() + " " + line);
-        System.out.println(now() + " " + line);
+        logger.info(now() + " " + line);
+        //System.out.println(now() + " " + line);
     }
 
     @AroundInvoke

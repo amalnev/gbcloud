@@ -23,7 +23,6 @@ public class NioFileReader extends NioFile implements IFileReader
     @Override
     public byte[] read(int bytesToRead) throws IOException
     {
-        //TODO: Уточнить исключение.
         if (bytesToRead > FILE_BUFFER_CAPACITY) throw new IOException();
 
         //Изначально буфер находится в режиме записи
