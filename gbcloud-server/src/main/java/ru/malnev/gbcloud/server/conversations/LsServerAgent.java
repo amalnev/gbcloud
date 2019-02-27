@@ -20,7 +20,7 @@ public class LsServerAgent extends ServerAgent
     {
         try
         {
-            Files.newDirectoryStream(getCurrentDirectory().getCurrentDirectory()).forEach(element ->
+            Files.newDirectoryStream(getCurrentDirectory()).forEach(element ->
                     response.getElements().add(new LsResponse.FilesystemElement(element)));
             sendMessageToPeer(response);
         }

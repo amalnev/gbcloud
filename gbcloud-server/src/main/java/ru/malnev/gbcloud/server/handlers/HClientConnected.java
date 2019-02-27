@@ -1,7 +1,7 @@
 package ru.malnev.gbcloud.server.handlers;
 
 
-import ru.malnev.gbcloud.server.events.EClientConntected;
+import ru.malnev.gbcloud.server.events.EClientConnected;
 import ru.malnev.gbcloud.server.logging.ServerLogger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,7 +12,7 @@ import javax.interceptor.Interceptors;
 @Interceptors(ServerLogger.class)
 public class HClientConnected
 {
-    private void handleClientConnected(@ObservesAsync final EClientConntected event)
+    private void handleClientConnected(@ObservesAsync final EClientConnected event)
     {
 
     }

@@ -6,9 +6,8 @@ import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
 import ru.malnev.gbcloud.common.transport.Netty;
 import ru.malnev.gbcloud.common.transport.NettyTransportChannel;
-import ru.malnev.gbcloud.server.context.IClientContext;
 import ru.malnev.gbcloud.server.conversations.ServerConversationManager;
-import ru.malnev.gbcloud.server.events.EClientConntected;
+import ru.malnev.gbcloud.server.events.EClientConnected;
 import ru.malnev.gbcloud.server.events.EMessageReceived;
 
 import javax.enterprise.event.Event;
@@ -17,9 +16,6 @@ import javax.inject.Inject;
 public class NettyServerHandler extends ChannelInboundHandlerAdapter
 {
     @Inject
-    private IClientContext clientContext;
-
-    @Inject
     private ServerConversationManager conversationManager;
 
     @Inject
@@ -27,7 +23,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter
     private ITransportChannel transportChannel;
 
     @Inject
-    private Event<EClientConntected> clientConntectedBus;
+    private Event<EClientConnected> clientConntectedBus;
 
     @Inject
     private Event<EMessageReceived> messageReceivedBus;
@@ -35,10 +31,9 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter
     @Override
     public void channelActive(final ChannelHandlerContext ctx)
     {
-        clientContext.setConversationManager(conversationManager);
         ((NettyTransportChannel) transportChannel).setChannelContext(ctx);
-        clientContext.getConversationManager().setTransportChannel(transportChannel);
-        clientConntectedBus.fireAsync(new EClientConntected(clientContext));
+        conversationManager.setTransportChannel(transportChannel);
+        clientConntectedBus.fireAsync(new EClientConnected(conversationManager));
     }
 
     @Override
@@ -47,7 +42,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter
     {
         if (msg == null) return;
         if (!(msg instanceof IMessage)) return;
-        messageReceivedBus.fireAsync(new EMessageReceived(clientContext, (IMessage) msg));
+        messageReceivedBus.fireAsync(new EMessageReceived(conversationManager, (IMessage) msg));
     }
 
     @Override

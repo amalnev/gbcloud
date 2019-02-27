@@ -17,7 +17,7 @@ public class PwdServerAgent extends ServerAgent
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
-        response.setCurrentDirectory(getCurrentDirectory().pwd());
+        response.setCurrentDirectory(getServerDirectory().pwd());
         sendMessageToPeer(response);
     }
 }

@@ -6,6 +6,8 @@ import ru.malnev.gbcloud.common.conversations.PassiveAgent;
 import ru.malnev.gbcloud.server.filesystem.ServerDirectory;
 import ru.malnev.gbcloud.server.persistence.entitites.User;
 
+import java.nio.file.Path;
+
 @PassiveAgent
 public abstract class ServerAgent extends AbstractConversation
 {
@@ -16,9 +18,15 @@ public abstract class ServerAgent extends AbstractConversation
         return conversationManager.getUser();
     }
 
-    public ServerDirectory getCurrentDirectory()
+    public Path getCurrentDirectory()
     {
         final ServerConversationManager conversationManager = (ServerConversationManager) getConversationManager();
-        return conversationManager.getCurrentDirectory();
+        return conversationManager.getServerDirectory().getCurrentDirectory();
+    }
+
+    public ServerDirectory getServerDirectory()
+    {
+        final ServerConversationManager conversationManager = (ServerConversationManager) getConversationManager();
+        return conversationManager.getServerDirectory();
     }
 }

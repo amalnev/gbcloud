@@ -18,5 +18,5 @@ public class ServerConversationManager extends AbstractConversationManager
     }
 
     @Getter
-    private ServerDirectory currentDirectory = new ServerDirectory();
+    private ServerDirectory serverDirectory = new ServerDirectory();
 }

@@ -4,9 +4,8 @@ import lombok.SneakyThrows;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.*;
 import ru.malnev.gbcloud.server.config.ServerConfig;
-import ru.malnev.gbcloud.server.context.IClientContext;
 import ru.malnev.gbcloud.server.conversations.ServerConversationManager;
-import ru.malnev.gbcloud.server.events.EClientConntected;
+import ru.malnev.gbcloud.server.events.EClientConnected;
 import ru.malnev.gbcloud.server.events.EClientDisconnected;
 import ru.malnev.gbcloud.server.events.EMessageReceived;
 
@@ -14,6 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import java.io.Closeable;
 import java.io.IOException;
@@ -29,6 +29,8 @@ import java.util.function.Consumer;
 @ApplicationScoped
 public class NioServer implements INetworkEndpoint
 {
+    private static final AnnotationLiteral<Nio> NIO_ANNOTATION = new AnnotationLiteral<Nio>() {};
+
     private Selector selector;
 
     private ServerSocketChannel socketChannel;
@@ -37,7 +39,7 @@ public class NioServer implements INetworkEndpoint
     private ServerConfig config;
 
     @Inject
-    private Event<EClientConntected> clientConnectedBus;
+    private Event<EClientConnected> clientConnectedBus;
 
     @Inject
     private Event<EMessageReceived> messageReceivedBus;
@@ -84,13 +86,12 @@ public class NioServer implements INetworkEndpoint
                     {
                         clientSocketChannel = ((ServerSocketChannel) selectionKey.channel()).accept();
                         clientSocketChannel.configureBlocking(false);
-                        final IClientContext clientContext = CDI.current().select(IClientContext.class).get();
-                        clientContext.setConversationManager(CDI.current().select(ServerConversationManager.class).get());
-                        final NioTransportChannel transportChannel = CDI.current().select(NioTransportChannel.class, new NioLiteral()).get();
+                        final ServerConversationManager conversationManager = CDI.current().select(ServerConversationManager.class).get();
+                        final NioTransportChannel transportChannel = CDI.current().select(NioTransportChannel.class, NIO_ANNOTATION).get();
                         transportChannel.setSocketChannel(clientSocketChannel);
-                        clientContext.getConversationManager().setTransportChannel(transportChannel);
-                        clientSocketChannel.register(selector, SelectionKey.OP_READ, clientContext);
-                        clientConnectedBus.fireAsync(new EClientConntected(clientContext));
+                        conversationManager.setTransportChannel(transportChannel);
+                        clientSocketChannel.register(selector, SelectionKey.OP_READ, conversationManager);
+                        clientConnectedBus.fireAsync(new EClientConnected(conversationManager));
                     }
                     catch (Exception e)
                     {
@@ -100,20 +101,20 @@ public class NioServer implements INetworkEndpoint
                 }
                 else if (selectionKey.isReadable())
                 {
-                    final IClientContext clientContext = (IClientContext) selectionKey.attachment();
+                    final ServerConversationManager conversationManager = (ServerConversationManager) selectionKey.attachment();
                     try
                     {
-                        final IMessage message = clientContext.getConversationManager().getTransportChannel().readMessage();
-                        messageReceivedBus.fireAsync(new EMessageReceived(clientContext, message));
+                        final IMessage message = conversationManager.getTransportChannel().readMessage();
+                        messageReceivedBus.fireAsync(new EMessageReceived(conversationManager, message));
                     }
                     catch (final ITransportChannel.CorruptedDataReceived e)
                     { //ignore
-                        System.out.println();
+
                     }
                     catch (Exception e)
                     {
-                        closeSilently.accept(clientContext.getConversationManager().getTransportChannel());
-                        clientDisconnectedBus.fireAsync(new EClientDisconnected(clientContext));
+                        closeSilently.accept(conversationManager.getTransportChannel());
+                        clientDisconnectedBus.fireAsync(new EClientDisconnected(conversationManager));
                     }
                 }
             }

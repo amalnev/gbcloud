@@ -5,13 +5,12 @@ import ru.malnev.gbcloud.common.events.EConversationComplete;
 import ru.malnev.gbcloud.common.events.EConversationFailed;
 import ru.malnev.gbcloud.common.events.EConversationTimedOut;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
-import ru.malnev.gbcloud.server.events.EClientConntected;
+import ru.malnev.gbcloud.server.events.EClientConnected;
 import ru.malnev.gbcloud.server.events.EMessageReceived;
 import ru.malnev.gbcloud.server.handlers.*;
 
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
-import java.lang.reflect.Method;
 
 public class ServerLogger extends CommonLogger
 {
@@ -22,8 +21,8 @@ public class ServerLogger extends CommonLogger
         final Class targetClass = invocationContext.getTarget().getClass();
         if (HClientConnected.class.isAssignableFrom(targetClass))
         {
-            final EClientConntected event = (EClientConntected) invocationContext.getParameters()[0];
-            final String remoteAddress = event.getClientContext()
+            final EClientConnected event = (EClientConnected) invocationContext.getParameters()[0];
+            final String remoteAddress = event
                     .getConversationManager()
                     .getTransportChannel()
                     .getRemoteAddress();
@@ -32,7 +31,7 @@ public class ServerLogger extends CommonLogger
         else if (HMessageReceived.class.isAssignableFrom(targetClass))
         {
             final EMessageReceived event = (EMessageReceived) invocationContext.getParameters()[0];
-            final String remoteAddress = event.getClientContext()
+            final String remoteAddress = event
                     .getConversationManager()
                     .getTransportChannel()
                     .getRemoteAddress();

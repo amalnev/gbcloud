@@ -4,7 +4,7 @@ import ru.malnev.gbcloud.common.conversations.IConversationManager;
 import ru.malnev.gbcloud.common.messages.auth.AuthMessage;
 import ru.malnev.gbcloud.common.messages.auth.UnauthorizedResponse;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
-import ru.malnev.gbcloud.server.context.IClientContext;
+import ru.malnev.gbcloud.server.conversations.ServerConversationManager;
 import ru.malnev.gbcloud.server.events.EMessageReceived;
 import ru.malnev.gbcloud.server.logging.ServerLogger;
 
@@ -18,11 +18,10 @@ public class HMessageReceived
 {
     private void handleMessageReceived(@ObservesAsync final EMessageReceived event)
     {
-        final IClientContext clientContext = event.getClientContext();
-        final ITransportChannel transportChannel = clientContext.getConversationManager().getTransportChannel();
-        if (clientContext.isAuthenticated() || event.getMessage() instanceof AuthMessage)
+        final ServerConversationManager conversationManager = event.getConversationManager();
+        final ITransportChannel transportChannel = conversationManager.getTransportChannel();
+        if (conversationManager.isAuthenticated() || event.getMessage() instanceof AuthMessage)
         {
-            final IConversationManager conversationManager = clientContext.getConversationManager();
             conversationManager.dispatchMessage(event.getMessage());
         }
         else

@@ -37,7 +37,7 @@ public class GetServerAgent extends ServerAgent
         if (message instanceof GetRequest)
         {
             final GetRequest request = (GetRequest) message;
-            final Path filePath = getCurrentDirectory().getCurrentDirectory().resolve(request.getFileName());
+            final Path filePath = getCurrentDirectory().resolve(request.getFileName());
             try
             {
                 sendingAgent.start(filePath, this);

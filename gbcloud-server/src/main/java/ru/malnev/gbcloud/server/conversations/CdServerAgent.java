@@ -32,7 +32,7 @@ public class CdServerAgent extends ServerAgent
         String failureReason = null;
         try
         {
-            getCurrentDirectory().cd(request.getTargetDirectory());
+            getServerDirectory().cd(request.getTargetDirectory());
         }
         catch (PathIsNotADirectoryException e)
         {

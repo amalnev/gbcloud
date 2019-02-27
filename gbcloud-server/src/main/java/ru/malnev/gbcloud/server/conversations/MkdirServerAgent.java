@@ -18,7 +18,7 @@ public class MkdirServerAgent extends ServerAgent
     public void processMessageFromPeer(@NotNull IMessage message)
     {
         final MkdirRequest request = (MkdirRequest) message;
-        final Path newPath = getCurrentDirectory().getCurrentDirectory().resolve(request.getDirectoryPath());
+        final Path newPath = getCurrentDirectory().resolve(request.getDirectoryPath());
         try
         {
             Files.createDirectories(newPath);

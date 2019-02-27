@@ -19,7 +19,7 @@ public class RmServerAgent extends ServerAgent
     {
         //TODO: добавить возможность удалять директории рекурсивно
         final RmRequest request = (RmRequest) message;
-        final Path pathToRemove = getCurrentDirectory().getCurrentDirectory().resolve(request.getTargetPath());
+        final Path pathToRemove = getCurrentDirectory().resolve(request.getTargetPath());
         try
         {
             Files.delete(pathToRemove);

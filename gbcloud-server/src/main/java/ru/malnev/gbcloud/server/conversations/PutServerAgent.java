@@ -41,7 +41,7 @@ public class PutServerAgent extends ServerAgent
             final PutRequest request = (PutRequest) message;
             try
             {
-                receivingAgent.start(getCurrentDirectory().getCurrentDirectory().resolve(request.getFileName()), this);
+                receivingAgent.start(getCurrentDirectory().resolve(request.getFileName()), this);
                 sendMessageToPeer(new FileTransferReady());
                 continueConversation();
             }

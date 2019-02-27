@@ -45,7 +45,7 @@ public class AuthenticationServerAgent extends ServerAgent
             else
             {
                 conversationManager.setUser(user);
-                conversationManager.getCurrentDirectory().setRootDirectory(Paths.get(user.getHomeDirectory()));
+                conversationManager.getServerDirectory().setRootDirectory(Paths.get(user.getHomeDirectory()));
                 response = new AuthSuccessResponse();
             }
 
