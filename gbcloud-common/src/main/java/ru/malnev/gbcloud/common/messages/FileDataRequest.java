@@ -7,9 +7,17 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServerErrorResponse extends AbstractMessage
+public class FileDataRequest extends AbstractMessage
 {
     @Getter
     @Setter
-    private String reason;
+    private byte[] data;
+
+    @Getter
+    @Setter
+    private boolean last;
+
+    @Getter
+    @Setter
+    private int cseq;
 }

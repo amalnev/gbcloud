@@ -51,6 +51,12 @@ public abstract class AbstractConversation implements IConversation
     @Setter
     private volatile long timeoutMillis = DEFAULT_TIMEOUT;
 
+    @Getter
+    private volatile int messagesSent = 0;
+
+    @Getter
+    private volatile int messagesReceived = 0;
+
     //TODO: Запускать отдельный поток, следящий за таймаутом для каждого диалога - не очень эффективное
     //решение. Лучше сделать один "чистящий" поток в AbstractConversationManager, который будет находить
     //и вычищать неактивные диалоги a la garbage collector
@@ -83,7 +89,7 @@ public abstract class AbstractConversation implements IConversation
         expectedMessages.add(messageClass);
     }
 
-    protected void continueConversation()
+    public void continueConversation()
     {
         active = true;
     }
@@ -93,11 +99,22 @@ public abstract class AbstractConversation implements IConversation
 
     }
 
+    protected void beforeFinish()
+    {
+
+    }
+
+    public void stopConversation()
+    {
+        getConversationManager().stopConversation(this);
+    }
+
     @Override
-    public void sendMessageToPeer(final @NotNull IMessage message)
+    public synchronized void sendMessageToPeer(final @NotNull IMessage message)
     {
         message.setConversationId(getId());
         getConversationManager().getTransportChannel().sendMessage(message);
+        messagesSent++;
     }
 
     @Override
@@ -122,6 +139,8 @@ public abstract class AbstractConversation implements IConversation
 
         lastActivityTime = System.currentTimeMillis();
         timeoutWorker.start();
+        messagesSent = 0;
+        messagesReceived = 0;
 
         if(annotatedWithStarts != null)
         {
@@ -142,16 +161,22 @@ public abstract class AbstractConversation implements IConversation
     @Override
     public void cleanup()
     {
+        beforeFinish();
         timeoutWorker.interrupt();
     }
 
+    private final static String PROCESS_MESSAGE_METHOD_NAME = "processMessageFromPeer";
+    private final static String UNEXPECTED_MESSAGE_REASON = "Last message was rejected by server";
+    private final static String UNAUTHORIZED_REASON = "Unauthorized";
+
     @AroundInvoke
     @SneakyThrows
-    private Object wrapMethods(final InvocationContext invocationContext)
+    private synchronized Object wrapMethods(final InvocationContext invocationContext)
     {
         final String invokedMethodName = invocationContext.getMethod().getName();
-        if (invokedMethodName.equals("processMessageFromPeer"))
+        if (invokedMethodName.equals(PROCESS_MESSAGE_METHOD_NAME))
         {
+            messagesReceived++;
             lastActivityTime = System.currentTimeMillis();
             final Class messageClass = invocationContext.getParameters()[0].getClass();
             if (expectedMessages.contains(messageClass))
@@ -162,7 +187,22 @@ public abstract class AbstractConversation implements IConversation
                     messageClass.equals(UnauthorizedResponse.class) ||
                     messageClass.equals(ServerErrorResponse.class))
             {
-                conversationManager.stopConversation(this);
+                stopConversation();
+                final EConversationFailed event = new EConversationFailed(this);
+                event.setRemote(true);
+                if(messageClass.equals(UnexpectedMessageResponse.class))
+                {
+                    event.setReason(UNEXPECTED_MESSAGE_REASON);
+                }
+                else if(messageClass.equals(UnauthorizedResponse.class))
+                {
+                    event.setReason(UNAUTHORIZED_REASON);
+                }
+                else if(messageClass.equals(ServerErrorResponse.class))
+                {
+                    final ServerErrorResponse response = (ServerErrorResponse) invocationContext.getParameters()[0];
+                    event.setReason(response.getReason());
+                }
                 conversationFailedBus.fireAsync(new EConversationFailed(this));
                 return null;
             }
@@ -179,7 +219,7 @@ public abstract class AbstractConversation implements IConversation
         {
             if(!active)
             {
-                getConversationManager().stopConversation(this);
+                stopConversation();
                 conversationCompleteBus.fireAsync(new EConversationComplete(this));
             }
         }

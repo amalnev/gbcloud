@@ -29,7 +29,7 @@ public class NioTransportChannel implements ITransportChannel
 
     private static final int MAGIC = 114576;
 
-    private static final int READ_BUFFER_CAPACITY = 1024 * 1024;
+    private static final int READ_BUFFER_CAPACITY = 10 * 1024 * 1024;
 
     private static final int HEADER_SIZE = 8;
 
@@ -64,7 +64,7 @@ public class NioTransportChannel implements ITransportChannel
             if (objectSize >= MAXIMUM_OBJECT_SIZE) throw new ObjectTooLargeException();
 
             //Выделяем байт-буфер для отправки
-            final ByteBuffer messageBuffer = ByteBuffer.allocate(8 + objectSize);
+            final ByteBuffer messageBuffer = ByteBuffer.allocate(HEADER_SIZE + objectSize);
 
             //Записываем магическое число и размер отправляемого объекта
             messageBuffer.putInt(MAGIC);
@@ -147,7 +147,7 @@ public class NioTransportChannel implements ITransportChannel
 
             //если для считывания из буфера доступно меньше 8-ми байт, пытаемся
             //дописать в буфер еще данные из канала.
-            if (readBuffer.remaining() < 8) readBytes(8 - readBuffer.remaining());
+            if (readBuffer.remaining() < HEADER_SIZE) readBytes(HEADER_SIZE - readBuffer.remaining());
 
             //читаем из буфера по 4 байта пока не найдем магическое число
             int magic = 0;
@@ -228,6 +228,13 @@ public class NioTransportChannel implements ITransportChannel
     {
         if (socketChannel == null) return false;
         return socketChannel.isConnected();
+    }
+
+    @Override
+    public int getMTU()
+    {
+        //return 10240;
+        return (int)(0.75f * MAXIMUM_OBJECT_SIZE);
     }
 
     @Override

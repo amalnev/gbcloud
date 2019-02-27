@@ -45,6 +45,12 @@ public class NettyTransportChannel implements ITransportChannel
     }
 
     @Override
+    public int getMTU()
+    {
+        return 1000000;
+    }
+
+    @Override
     public synchronized void close() throws IOException
     {
         channelContext.close();

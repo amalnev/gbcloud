@@ -26,4 +26,12 @@ public interface IConversation
     long getTimeoutMillis();
 
     void setTimeoutMillis(long timeoutMillis);
+
+    int getMessagesReceived();
+
+    int getMessagesSent();
+
+    void continueConversation();
+
+    void stopConversation();
 }

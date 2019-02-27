@@ -58,7 +58,8 @@ public class ClientLogger extends CommonLogger
         else if(HConversationFailed.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
         {
             final EConversationFailed event = (EConversationFailed) invocationContext.getParameters()[0];
-            write("Conversation " + event.getConversation().getId() + " failed.");
+            write("Conversation " + event.getConversation().getId() + " failed. Reason: " +
+                    event.getReason() + ". Remote: " + event.isRemote());
         }
         else if(HConversationTimedOut.class.isAssignableFrom(targetClass))
         {
@@ -68,7 +69,7 @@ public class ClientLogger extends CommonLogger
         else if(HConversationComplete.class.isAssignableFrom(targetClass))
         {
             final EConversationComplete event = (EConversationComplete) invocationContext.getParameters()[0];
-            write("Conversation " + event.getConversation().getId() + " completed successfully.");
+            write("Conversation " + event.getConversation().getId() + " completed.");
         }
 
         return invocationContext.proceed();

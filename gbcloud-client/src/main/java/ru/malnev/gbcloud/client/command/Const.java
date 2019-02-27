@@ -14,12 +14,15 @@ class Const
     public static final String RLS_COMMAND_KEYWORD = "rls";
     public static final String RPWD_COMMAND_KEYWORD = "rpwd";
     public static final String HELP_COMMAND_KEYWORD = "help";
+    public static final String PUT_COMMAND_KEYWORD = "put";
+    public static final String GET_COMMAND_KEYWORD = "get";
 
     //command argument names
     public static final String SERVER_ARGUMENT_NAME = "Host";
     public static final String LOGIN_ARGUMENT_NAME = "Login";
     public static final String PASSWORD_ARGUMENT_NAME = "Password";
     public final static String TARGET_DIRECTORY_ARGUMENT_NAME = "Target directory";
+    public final static String TARGET_FILE_ARGUMENT_NAME = "Target file";
 
     //command descriptions
     public static final String CLOSE_COMMAND_DESCRIPTION = "Close connection to server.";
@@ -33,4 +36,6 @@ class Const
     public static final String RLS_COMMAND_DESCRIPTION = "List the contents of the current remote directory.";
     public static final String RPWD_COMMAND_DESCRIPTION = "Print the path to the current remote directory";
     public static final String HELP_COMMAND_DESCRIPTION = "Display help";
+    public static final String PUT_COMMAND_DESCRIPTION = "Upload a file to the server.";
+    public static final String GET_COMMAND_DESCRIPTION = "Downloads a file from the server.";
 }

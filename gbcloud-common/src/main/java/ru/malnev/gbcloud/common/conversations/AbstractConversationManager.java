@@ -38,6 +38,8 @@ public abstract class AbstractConversationManager implements IConversationManage
         });
     }
 
+    //TODO: добавить обработку исключений, которые могут вывалиться из Conversation.init() и
+    //processMessageFromPeer(). В этом случае нужно закрывать диалог и кидать EConversationFailed
     @Override
     public void dispatchMessage(final @NotNull IMessage message)
     {

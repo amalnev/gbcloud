@@ -20,8 +20,7 @@ public class ServerLogger extends CommonLogger
     private Object logMethod(final InvocationContext invocationContext)
     {
         final Class targetClass = invocationContext.getTarget().getClass();
-        //final Method method = invocationContext.getMethod();
-        if (HClientConnected.class.isAssignableFrom(targetClass)/*method.getName().equals("handleClientConnected")*/)
+        if (HClientConnected.class.isAssignableFrom(targetClass))
         {
             final EClientConntected event = (EClientConntected) invocationContext.getParameters()[0];
             final String remoteAddress = event.getClientContext()
@@ -30,7 +29,7 @@ public class ServerLogger extends CommonLogger
                     .getRemoteAddress();
             write("Connection from " + remoteAddress + " accepted.");
         }
-        else if (HMessageReceived.class.isAssignableFrom(targetClass)/*method.getName().equals("handleMessageReceived")*/)
+        else if (HMessageReceived.class.isAssignableFrom(targetClass))
         {
             final EMessageReceived event = (EMessageReceived) invocationContext.getParameters()[0];
             final String remoteAddress = event.getClientContext()
@@ -49,7 +48,8 @@ public class ServerLogger extends CommonLogger
         else if(HConversationFailed.class.isAssignableFrom(targetClass))
         {
             final EConversationFailed event = (EConversationFailed) invocationContext.getParameters()[0];
-            write("Conversation " + event.getConversation().getId() + " failed.");
+            write("Conversation " + event.getConversation().getId() + " failed. Reason: " +
+                    event.getReason() + ". Remote: " + event.isRemote());
         }
         else if(HConversationTimedOut.class.isAssignableFrom(targetClass))
         {
@@ -59,7 +59,7 @@ public class ServerLogger extends CommonLogger
         else if(HConversationComplete.class.isAssignableFrom(targetClass))
         {
             final EConversationComplete event = (EConversationComplete) invocationContext.getParameters()[0];
-            write("Conversation " + event.getConversation().getId() + " completed successfully.");
+            write("Conversation " + event.getConversation().getId() + " completed.");
         }
         return invocationContext.proceed();
     }

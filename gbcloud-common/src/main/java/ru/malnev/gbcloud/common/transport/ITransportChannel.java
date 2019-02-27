@@ -25,6 +25,8 @@ public interface ITransportChannel extends Closeable
 
     boolean isConnected();
 
+    int getMTU();
+
     class CorruptedDataReceived extends Exception {}
 
     class RemoteEndGone extends Exception {}
