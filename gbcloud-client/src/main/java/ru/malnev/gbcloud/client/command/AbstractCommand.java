@@ -37,7 +37,7 @@ public abstract class AbstractCommand implements ICommand
             for (i = args.length - 1; i < arguments.size(); i++)
             {
                 final ICommandArgument argument = arguments.get(i);
-                System.out.println("Please type the value for [" + argument.getName() + "]:");
+                System.out.print("Please type the value for [" + argument.getName() + "]: ");
                 final Scanner scanner = new Scanner(System.in);
                 argument.setValue(scanner.nextLine());
             }

@@ -26,8 +26,8 @@ public class ClientLogger extends CommonLogger
     private Object logMethod(final InvocationContext invocationContext)
     {
         final Class targetClass = invocationContext.getTarget().getClass();
-        //final Method method = invocationContext.getMethod();
-        if (HMessageReceived.class.isAssignableFrom(targetClass)/*method.getName().equals("handleMessageReceived")*/)
+
+        if (HMessageReceived.class.isAssignableFrom(targetClass))
         {
             final EMessageReceived event = (EMessageReceived) invocationContext.getParameters()[0];
             final IMessage message = event.getMessage();
@@ -45,16 +45,16 @@ public class ClientLogger extends CommonLogger
                     " was received from " +
                     remoteAddress);
         }
-        else if (HAuthSuccess.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthSuccess")*/)
+        else if (HAuthSuccess.class.isAssignableFrom(targetClass))
         {
             write("Authentication success.");
         }
-        else if (HAuthFailure.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
+        else if (HAuthFailure.class.isAssignableFrom(targetClass))
         {
             final EAuthFailure event = (EAuthFailure) invocationContext.getParameters()[0];
             write("Authentication failure. Reason: " + event.getReason());
         }
-        else if (HConversationFailed.class.isAssignableFrom(targetClass)/*method.getName().equals("handleAuthFailure")*/)
+        else if (HConversationFailed.class.isAssignableFrom(targetClass))
         {
             final EConversationFailed event = (EConversationFailed) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " failed. Reason: " +
@@ -69,6 +69,10 @@ public class ClientLogger extends CommonLogger
         {
             final EConversationComplete event = (EConversationComplete) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " completed.");
+        }
+        else if(HConnectionClosed.class.isAssignableFrom(targetClass))
+        {
+            write("Disconnected.");
         }
 
         return invocationContext.proceed();

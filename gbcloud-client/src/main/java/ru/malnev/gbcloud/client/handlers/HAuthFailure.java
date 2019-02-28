@@ -18,6 +18,7 @@ public class HAuthFailure
 
     private void handleAuthFailure(@ObservesAsync final EAuthFailure event)
     {
+        System.out.println("Authentication failed. Reason: " + event.getReason());
         networkEndpoint.stop();
     }
 }

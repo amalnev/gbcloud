@@ -8,6 +8,8 @@ import ru.malnev.gbcloud.common.conversations.StartsWith;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ping.KeepAliveMessage;
 
+import java.sql.SQLOutput;
+
 @ActiveAgent
 @StartsWith(KeepAliveMessage.class)
 @Expects(KeepAliveMessage.class)
@@ -19,6 +21,7 @@ public class KeepAliveClientAgent extends AbstractConversation
     public synchronized void processMessageFromPeer(final @NotNull IMessage message)
     {
         final long delta = System.currentTimeMillis() - startTime;
+        System.out.println();
         System.out.println("Response from " +
                 getConversationManager().getTransportChannel().getRemoteAddress() +
                 ". rtt=" +

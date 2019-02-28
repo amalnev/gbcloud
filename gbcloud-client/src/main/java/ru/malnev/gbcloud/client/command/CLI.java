@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-//TODO: Добавить печать приглашения
 @ApplicationScoped
 public class CLI
 {
@@ -52,29 +51,57 @@ public class CLI
     @Inject
     private ClientConfig config;
 
+    @Setter
+    private String remoteServer;
+
+    @Setter
+    private String remoteDirectory;
+
+    private synchronized String getPrompt()
+    {
+        return "(" + remoteServer + ") [l: " + currentDirectory.getName(currentDirectory.getNameCount() - 1) +
+            "|r: " + remoteDirectory + "] # ";
+    }
+
+    public synchronized void resetPrompt()
+    {
+        remoteServer = "not connected";
+        remoteDirectory = "";
+    }
+
+    public synchronized void updatePrompt()
+    {
+        System.out.println();
+        System.out.print(getPrompt());
+    }
+
     private void handleConsoleInputRequired(@Observes final EConsoleInputRequired event)
     {
+        updatePrompt();
         final Scanner scanner = new Scanner(System.in);
         consoleInputReceived.fire(new EConsoleInputReceived(scanner.nextLine()));
     }
 
     private void handleConsoleInputReceived(@Observes final EConsoleInputReceived event)
     {
-        final ICommand command = parser.parse(event.getLine());
-        try
+        if(event.getLine() != null && event.getLine().length() != 0)
         {
-            if (command != null)
+            final ICommand command = parser.parse(event.getLine());
+            try
             {
-                command.run();
+                if (command != null)
+                {
+                    command.run();
+                }
+                else
+                {
+                    System.out.println(UNRECOGNIZED_COMMAND_MESSAGE);
+                }
             }
-            else
+            catch (Exception e)
             {
-                System.out.println(UNRECOGNIZED_COMMAND_MESSAGE);
+                e.printStackTrace();
             }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
         }
 
         if (active)
@@ -85,16 +112,17 @@ public class CLI
 
     public void start()
     {
+        resetPrompt();
         currentDirectory = Paths.get(config.getLocalStorage()).toAbsolutePath().normalize();
         consoleInputRequired.fire(new EConsoleInputRequired());
     }
 
-    public String pwd()
+    public synchronized String pwd()
     {
         return currentDirectory.toString();
     }
 
-    public void cd(final @NotNull String path) throws PathDoesNotExistException, PathIsNotADirectoryException
+    public synchronized void cd(final @NotNull String path) throws PathDoesNotExistException, PathIsNotADirectoryException
     {
         if (path.length() == 0) return;
         Path newPath = Paths.get(path).normalize();
@@ -102,5 +130,6 @@ public class CLI
         if (!Files.exists(newPath)) throw new PathDoesNotExistException();
         if (!Files.isDirectory(newPath)) throw new PathIsNotADirectoryException();
         currentDirectory = newPath.normalize();
+        updatePrompt();
     }
 }

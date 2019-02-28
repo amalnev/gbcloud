@@ -49,7 +49,7 @@ public class AuthenticationClientAgent extends AbstractConversation
         }
         else if (message instanceof AuthSuccessResponse)
         {
-            authSuccessBus.fireAsync(new EAuthSuccess());
+            authSuccessBus.fireAsync(new EAuthSuccess(getConversationManager()));
         }
     }
 }

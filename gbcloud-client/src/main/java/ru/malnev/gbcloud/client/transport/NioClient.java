@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.client.config.ClientConfig;
 import ru.malnev.gbcloud.client.conversations.ClientConversationManager;
+import ru.malnev.gbcloud.client.events.EConnectionClosed;
 import ru.malnev.gbcloud.client.events.EMessageReceived;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
@@ -39,6 +40,9 @@ public class NioClient implements INetworkEndpoint
 
     @Inject
     private Event<EMessageReceived> messageReceivedBus;
+
+    @Inject
+    private Event<EConnectionClosed> connectionClosedBus;
 
     @Inject
     private ClientConfig config;
@@ -94,6 +98,10 @@ public class NioClient implements INetworkEndpoint
                 }
                 catch (Exception ex) {}
                 transportChannel.closeSilently();
+            }
+            finally
+            {
+                connectionClosedBus.fireAsync(new EConnectionClosed());
             }
         }
     };

@@ -12,10 +12,12 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import lombok.SneakyThrows;
 import ru.malnev.gbcloud.client.config.ClientConfig;
+import ru.malnev.gbcloud.client.events.EConnectionClosed;
 import ru.malnev.gbcloud.common.transport.INetworkEndpoint;
 import ru.malnev.gbcloud.common.transport.Netty;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 
@@ -27,6 +29,9 @@ public class NettyClient implements INetworkEndpoint
 
     @Inject
     private ClientConfig config;
+
+    @Inject
+    private Event<EConnectionClosed> connectionClosedBus;
 
     private Thread workerThread;
 
@@ -61,6 +66,7 @@ public class NettyClient implements INetworkEndpoint
             finally
             {
                 group.shutdownGracefully();
+                connectionClosedBus.fireAsync(new EConnectionClosed());
             }
         }
     };
