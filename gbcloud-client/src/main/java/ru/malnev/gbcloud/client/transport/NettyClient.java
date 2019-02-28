@@ -18,13 +18,17 @@ import ru.malnev.gbcloud.common.transport.Netty;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 
 @Netty
+@Default
 @ApplicationScoped
 public class NettyClient implements INetworkEndpoint
 {
+    private static final int MAXIMUM_OBJECT_SIZE = 1024 * 1024 * 10; //10M
+
     private volatile ChannelFuture channelFuture;
 
     @Inject
@@ -52,7 +56,7 @@ public class NettyClient implements INetworkEndpoint
                             protected void initChannel(final SocketChannel socketChannel)
                             {
                                 socketChannel.pipeline().addLast(new ObjectEncoder(),
-                                        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                                        new ObjectDecoder(MAXIMUM_OBJECT_SIZE, ClassResolvers.cacheDisabled(null)),
                                         CDI.current().select(NettyClientHandler.class).get());
                             }
                         });

@@ -8,8 +8,6 @@ import ru.malnev.gbcloud.common.conversations.StartsWith;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.ping.KeepAliveMessage;
 
-import java.sql.SQLOutput;
-
 @ActiveAgent
 @StartsWith(KeepAliveMessage.class)
 @Expects(KeepAliveMessage.class)

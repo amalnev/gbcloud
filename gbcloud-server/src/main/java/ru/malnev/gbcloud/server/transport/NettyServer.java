@@ -17,13 +17,17 @@ import ru.malnev.gbcloud.common.transport.Netty;
 import ru.malnev.gbcloud.server.config.ServerConfig;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 
 @Netty
+@Default
 @ApplicationScoped
 public class NettyServer implements INetworkEndpoint
 {
+    private static final int MAXIMUM_OBJECT_SIZE = 1024 * 1024 * 10; //10M
+
     private ChannelFuture channelFuture;
 
     @Inject
@@ -46,7 +50,7 @@ public class NettyServer implements INetworkEndpoint
                         protected void initChannel(SocketChannel socketChannel) throws Exception
                         {
                             socketChannel.pipeline().addLast(new ObjectEncoder(),
-                                    new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(MAXIMUM_OBJECT_SIZE, ClassResolvers.cacheDisabled(null)),
                                     CDI.current().select(NettyServerHandler.class).get());
                         }
                     }).childOption(ChannelOption.SO_KEEPALIVE, true);

@@ -11,7 +11,6 @@ import ru.malnev.gbcloud.common.messages.ls.LsRequest;
 import ru.malnev.gbcloud.common.messages.ls.LsResponse;
 
 import javax.inject.Inject;
-import java.util.function.Predicate;
 
 @ActiveAgent
 @StartsWith(LsRequest.class)
@@ -32,7 +31,7 @@ public class LsClientAgent extends AbstractConversation
 
         response.getElements().stream()
                 .filter(filesystemElement -> !filesystemElement.isDirectory())
-                .forEach(file -> System.out.println("\t\t" + file.getSize() + "\t\t\t" + file.getName() ));
+                .forEach(file -> System.out.println("\t\t" + file.getSize() + "\t\t\t" + file.getName()));
         cli.updatePrompt();
     }
 }

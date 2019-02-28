@@ -46,7 +46,7 @@ public class CdClientAgent extends AbstractConversation
             System.out.println();
             System.out.println(FAIL_MESSAGE + cdFailResponse.getReason());
         }
-        else if(message instanceof ServerOkResponse)
+        else if (message instanceof ServerOkResponse)
         {
             cli.setRemoteDirectory(Paths.get(targetDirectory).normalize().toString());
             cli.updatePrompt();

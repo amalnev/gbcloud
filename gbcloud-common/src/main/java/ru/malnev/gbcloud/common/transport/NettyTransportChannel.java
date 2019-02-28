@@ -15,6 +15,8 @@ import java.net.InetSocketAddress;
 @Interceptors(CommonLogger.class)
 public class NettyTransportChannel implements ITransportChannel
 {
+    private static final int MTU = 1024 * 1024 * 9; //9M
+
     @Getter
     @Setter
     private ChannelHandlerContext channelContext;
@@ -47,7 +49,7 @@ public class NettyTransportChannel implements ITransportChannel
     @Override
     public int getMTU()
     {
-        return 1000000;
+        return MTU;
     }
 
     @Override

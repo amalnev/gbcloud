@@ -15,7 +15,6 @@ import ru.malnev.gbcloud.common.transport.NioTransportChannel;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,7 +23,6 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
 @Nio
-@Default
 @ApplicationScoped
 public class NioClient implements INetworkEndpoint
 {

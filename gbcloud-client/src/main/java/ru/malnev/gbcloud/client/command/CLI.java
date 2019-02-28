@@ -60,7 +60,7 @@ public class CLI
     private synchronized String getPrompt()
     {
         return "(" + remoteServer + ") [l: " + currentDirectory.getName(currentDirectory.getNameCount() - 1) +
-            "|r: " + remoteDirectory + "] # ";
+                "|r: " + remoteDirectory + "] # ";
     }
 
     public synchronized void resetPrompt()
@@ -84,7 +84,7 @@ public class CLI
 
     private void handleConsoleInputReceived(@Observes final EConsoleInputReceived event)
     {
-        if(event.getLine() != null && event.getLine().length() != 0)
+        if (event.getLine() != null && event.getLine().length() != 0)
         {
             final ICommand command = parser.parse(event.getLine());
             try

@@ -14,7 +14,6 @@ import ru.malnev.gbcloud.server.events.EMessageReceived;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
@@ -28,7 +27,6 @@ import java.nio.channels.SocketChannel;
 import java.util.function.Consumer;
 
 @Nio
-@Default
 @ApplicationScoped
 public class NioServer implements INetworkEndpoint
 {

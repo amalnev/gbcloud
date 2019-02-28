@@ -70,7 +70,7 @@ public class ClientLogger extends CommonLogger
             final EConversationComplete event = (EConversationComplete) invocationContext.getParameters()[0];
             write("Conversation " + event.getConversation().getId() + " completed.");
         }
-        else if(HConnectionClosed.class.isAssignableFrom(targetClass))
+        else if (HConnectionClosed.class.isAssignableFrom(targetClass))
         {
             write("Disconnected.");
         }

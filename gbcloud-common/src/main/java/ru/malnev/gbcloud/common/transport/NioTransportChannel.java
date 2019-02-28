@@ -227,8 +227,8 @@ public class NioTransportChannel implements ITransportChannel
     @Override
     public int getMTU()
     {
-        //return 10240;
-        return (int) (0.75f * MAXIMUM_OBJECT_SIZE);
+        return 10240;
+        //return (int) (0.75f * MAXIMUM_OBJECT_SIZE);
     }
 
     @Override
