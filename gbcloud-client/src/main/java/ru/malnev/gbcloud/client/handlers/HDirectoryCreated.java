@@ -7,7 +7,6 @@ import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 import ru.malnev.gbcloud.common.events.EDirectoryCreated;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Conversation;
 import javax.enterprise.event.ObservesAsync;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;

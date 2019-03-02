@@ -34,16 +34,16 @@ public class DirectoryWatcher implements Runnable
     @SneakyThrows
     public DirectoryWatcher()
     {
-         watchService = FileSystems.getDefault().newWatchService();
-         watchKeys = new LinkedList<>();
+        watchService = FileSystems.getDefault().newWatchService();
+        watchKeys = new LinkedList<>();
     }
 
     public synchronized void watchDirectory(final @NotNull String path) throws PathDoesNotExistException,
             PathIsNotADirectoryException, IOException
     {
         watchPath = Paths.get(path).toAbsolutePath().normalize();
-        if(!Files.exists(watchPath)) throw new PathDoesNotExistException();
-        if(!Files.isDirectory(watchPath)) throw new PathIsNotADirectoryException();
+        if (!Files.exists(watchPath)) throw new PathDoesNotExistException();
+        if (!Files.isDirectory(watchPath)) throw new PathIsNotADirectoryException();
 
         watchKeys.forEach(WatchKey::cancel);
         watchKeys.clear();
@@ -55,9 +55,9 @@ public class DirectoryWatcher implements Runnable
                                                      final BasicFileAttributes attrs) throws IOException
             {
                 watchKeys.add(dir.register(watchService,
-                    StandardWatchEventKinds.ENTRY_CREATE,
-                    StandardWatchEventKinds.ENTRY_DELETE,
-                    StandardWatchEventKinds.ENTRY_MODIFY));
+                        StandardWatchEventKinds.ENTRY_CREATE,
+                        StandardWatchEventKinds.ENTRY_DELETE,
+                        StandardWatchEventKinds.ENTRY_MODIFY));
                 return FileVisitResult.CONTINUE;
             }
         });
@@ -66,23 +66,23 @@ public class DirectoryWatcher implements Runnable
     @Override
     public void run()
     {
-        while(true)
+        while (true)
         {
             synchronized (this)
             {
                 WatchKey watchKey;
-                while((watchKey = watchService.poll()) != null)
+                while ((watchKey = watchService.poll()) != null)
                 {
-                    final Path directoryPath = (Path)watchKey.watchable();
-                    for(final WatchEvent<?> event : watchKey.pollEvents())
+                    final Path directoryPath = (Path) watchKey.watchable();
+                    for (final WatchEvent<?> event : watchKey.pollEvents())
                     {
-                        if(event.kind().equals(StandardWatchEventKinds.OVERFLOW)) return;
+                        if (event.kind().equals(StandardWatchEventKinds.OVERFLOW)) return;
                         final Path absoluteLocalFilePath = directoryPath.resolve(((WatchEvent<Path>) event).context());
                         final Path relativeLocalFilePath = watchPath.relativize(absoluteLocalFilePath);
 
-                        if(event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE))
+                        if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE))
                         {
-                            if(Files.isDirectory(absoluteLocalFilePath))
+                            if (Files.isDirectory(absoluteLocalFilePath))
                             {
                                 try
                                 {
@@ -131,11 +131,11 @@ public class DirectoryWatcher implements Runnable
                                 fileCreatedBus.fireAsync(fileCreatedEvent);
                             }
                         }
-                        else if(event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE))
+                        else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE))
                         {
 
                         }
-                        else if(event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY))
+                        else if (event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY))
                         {
 
                         }

@@ -72,12 +72,12 @@ public class ClientLogger extends CommonLogger
         {
             write("Disconnected.");
         }
-        else if(HDirectoryCreated.class.isAssignableFrom(targetClass))
+        else if (HDirectoryCreated.class.isAssignableFrom(targetClass))
         {
             final EDirectoryCreated event = (EDirectoryCreated) invocationContext.getParameters()[0];
             write("Directory created: " + event.getLocalAbsolutePath());
         }
-        else if(HFileCreated.class.isAssignableFrom(targetClass))
+        else if (HFileCreated.class.isAssignableFrom(targetClass))
         {
             final EFileCreated event = (EFileCreated) invocationContext.getParameters()[0];
             write("File created: " + event.getLocalAbsolutePath());
