@@ -5,9 +5,7 @@ import ru.malnev.gbcloud.client.events.EAuthFailure;
 import ru.malnev.gbcloud.client.events.EMessageReceived;
 import ru.malnev.gbcloud.client.handlers.*;
 import ru.malnev.gbcloud.common.conversations.IConversationManager;
-import ru.malnev.gbcloud.common.events.EConversationComplete;
-import ru.malnev.gbcloud.common.events.EConversationFailed;
-import ru.malnev.gbcloud.common.events.EConversationTimedOut;
+import ru.malnev.gbcloud.common.events.*;
 import ru.malnev.gbcloud.common.logging.CommonLogger;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.transport.ITransportChannel;
@@ -73,6 +71,16 @@ public class ClientLogger extends CommonLogger
         else if (HConnectionClosed.class.isAssignableFrom(targetClass))
         {
             write("Disconnected.");
+        }
+        else if(HDirectoryCreated.class.isAssignableFrom(targetClass))
+        {
+            final EDirectoryCreated event = (EDirectoryCreated) invocationContext.getParameters()[0];
+            write("Directory created: " + event.getLocalAbsolutePath());
+        }
+        else if(HFileCreated.class.isAssignableFrom(targetClass))
+        {
+            final EFileCreated event = (EFileCreated) invocationContext.getParameters()[0];
+            write("File created: " + event.getLocalAbsolutePath());
         }
 
         return invocationContext.proceed();

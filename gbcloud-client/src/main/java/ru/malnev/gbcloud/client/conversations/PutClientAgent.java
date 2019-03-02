@@ -21,7 +21,11 @@ public class PutClientAgent extends AbstractConversation
 {
     @Getter
     @Setter
-    private Path filePath;
+    private Path relativeFilePath;
+
+    @Getter
+    @Setter
+    private Path localRoot;
 
     @Inject
     private FileTransferSendingAgent sendingAgent;
@@ -31,8 +35,8 @@ public class PutClientAgent extends AbstractConversation
     protected synchronized void beforeStart(@NotNull IMessage initialMessage)
     {
         final PutRequest putRequest = (PutRequest) initialMessage;
-        putRequest.setFileName(filePath.getFileName().toString());
-        sendingAgent.start(filePath, this);
+        putRequest.setFileName(relativeFilePath.toString());
+        sendingAgent.start(localRoot.resolve(relativeFilePath), this);
     }
 
     @Override

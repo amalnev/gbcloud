@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractConversationManager implements IConversationManager
 {
@@ -33,9 +34,9 @@ public abstract class AbstractConversationManager implements IConversationManage
     @Setter
     private ITransportChannel transportChannel;
 
-    private Map<String, IConversation> conversationMap = new HashMap<>();
+    private Map<String, IConversation> conversationMap = new ConcurrentHashMap<>();
 
-    private Map<Class<? extends IMessage>, Class<? extends IConversation>> conversationClassMap = new HashMap<>();
+    private Map<Class<? extends IMessage>, Class<? extends IConversation>> conversationClassMap = new ConcurrentHashMap<>();
 
     private final Thread garbageCollector = new Thread(() ->
     {
@@ -82,7 +83,7 @@ public abstract class AbstractConversationManager implements IConversationManage
     }
 
     @Override
-    public synchronized void dispatchMessage(final @NotNull IMessage message)
+    public void dispatchMessage(final @NotNull IMessage message)
     {
         try
         {
@@ -152,7 +153,7 @@ public abstract class AbstractConversationManager implements IConversationManage
     }
 
     @Override
-    public synchronized void stopConversation(final @NotNull IConversation conversation)
+    public void stopConversation(final @NotNull IConversation conversation)
     {
         conversation.cleanup();
         conversationMap.remove(conversation.getId());
@@ -160,7 +161,7 @@ public abstract class AbstractConversationManager implements IConversationManage
 
     @Override
     @SneakyThrows
-    public synchronized void startConversation(@NotNull IConversation conversation)
+    public void startConversation(@NotNull IConversation conversation)
     {
         if (getTransportChannel() == null) throw new Exception();
         conversationMap.put(conversation.getId(), conversation);

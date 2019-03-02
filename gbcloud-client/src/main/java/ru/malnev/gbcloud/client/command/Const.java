@@ -18,6 +18,7 @@ class Const
     public static final String GET_COMMAND_KEYWORD = "get";
     public static final String RMKDIR_COMMAND_KEYWORD = "rmkdir";
     public static final String RRM_COMMAND_KEYWORD = "rrm";
+    public static final String WATCH_COMMAND_KEYWORD = "watch";
 
     //command argument names
     public static final String SERVER_ARGUMENT_NAME = "Host";
@@ -43,4 +44,5 @@ class Const
     public static final String GET_COMMAND_DESCRIPTION = "Downloads a file from the server.";
     public static final String RMKDIR_COMMAND_DESCRIPTION = "Creates a directory on the server.";
     public static final String RRM_COMMAND_DESCRIPTION = "Deletes a file or directory on the server.";
+    public static final String WATCH_COMMAND_DESCRIPTION = "Watches a local directory for changes and reflects those changes to the server.";
 }

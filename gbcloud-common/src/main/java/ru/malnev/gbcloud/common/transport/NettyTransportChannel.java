@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
 @Interceptors(CommonLogger.class)
 public class NettyTransportChannel implements ITransportChannel
 {
-    private static final int MTU = 1024 * 1024 * 9; //9M
+    private static final int MTU = 1024 * 1024; //1M
 
     @Getter
     @Setter
