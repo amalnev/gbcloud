@@ -21,4 +21,8 @@ public class FileDataRequest extends AbstractMessage
     @Getter
     @Setter
     private int cseq;
+
+    @Getter
+    @Setter
+    private int percentComplete;
 }

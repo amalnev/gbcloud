@@ -5,6 +5,7 @@ import ru.malnev.gbcloud.client.conversations.LsClientAgent;
 
 import javax.inject.Inject;
 
+@Importance(2)
 @Keyword(Const.RLS_COMMAND_KEYWORD)
 @Description(Const.RLS_COMMAND_DESCRIPTION)
 public class RlsCommand extends AbstractCommand

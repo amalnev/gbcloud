@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import static ru.malnev.gbcloud.client.command.Const.TARGET_DIRECTORY_ARGUMENT_NAME;
 
+@Importance(2)
 @Keyword(Const.RCD_COMMAND_KEYWORD)
 @Arguments(TARGET_DIRECTORY_ARGUMENT_NAME)
 @Description(Const.RCD_COMMAND_DESCRIPTION)

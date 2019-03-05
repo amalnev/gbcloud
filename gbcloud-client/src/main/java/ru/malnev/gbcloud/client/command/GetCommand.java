@@ -6,6 +6,7 @@ import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 
 import javax.inject.Inject;
 
+@Importance(3)
 @Keyword(Const.GET_COMMAND_KEYWORD)
 @Description(Const.GET_COMMAND_DESCRIPTION)
 @Arguments(Const.TARGET_FILE_ARGUMENT_NAME)

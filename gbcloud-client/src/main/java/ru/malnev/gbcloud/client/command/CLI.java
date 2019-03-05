@@ -130,6 +130,6 @@ public class CLI
         if (!Files.exists(newPath)) throw new PathDoesNotExistException();
         if (!Files.isDirectory(newPath)) throw new PathIsNotADirectoryException();
         currentDirectory = newPath.normalize();
-        updatePrompt();
+        //updatePrompt();
     }
 }

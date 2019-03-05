@@ -4,21 +4,21 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import ru.malnev.gbcloud.common.events.EDirectoryCreated;
 import ru.malnev.gbcloud.common.events.EFileCreated;
+import ru.malnev.gbcloud.common.events.EFilesystemItemDeleted;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.io.IOException;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
 @ApplicationScoped
 public class DirectoryWatcher implements Runnable
 {
-    private static final int QUANTUM = 500;
-
     private WatchService watchService;
 
     private Path watchPath;
@@ -31,6 +31,11 @@ public class DirectoryWatcher implements Runnable
     @Inject
     private Event<EFileCreated> fileCreatedBus;
 
+    @Inject
+    private Event<EFilesystemItemDeleted> itemDeletedBus;
+
+    private Map<Path, Long> timestampMap = new HashMap<>();
+
     @SneakyThrows
     public DirectoryWatcher()
     {
@@ -38,7 +43,7 @@ public class DirectoryWatcher implements Runnable
         watchKeys = new LinkedList<>();
     }
 
-    public synchronized void watchDirectory(final @NotNull String path) throws PathDoesNotExistException,
+    public void watchDirectory(final @NotNull String path) throws PathDoesNotExistException,
             PathIsNotADirectoryException, IOException
     {
         watchPath = Paths.get(path).toAbsolutePath().normalize();
@@ -48,37 +53,54 @@ public class DirectoryWatcher implements Runnable
         watchKeys.forEach(WatchKey::cancel);
         watchKeys.clear();
 
-        Files.walkFileTree(watchPath, new SimpleFileVisitor<Path>()
-        {
-            @Override
-            public FileVisitResult preVisitDirectory(final Path dir,
-                                                     final BasicFileAttributes attrs) throws IOException
-            {
-                watchKeys.add(dir.register(watchService,
-                        StandardWatchEventKinds.ENTRY_CREATE,
-                        StandardWatchEventKinds.ENTRY_DELETE,
-                        StandardWatchEventKinds.ENTRY_MODIFY));
-                return FileVisitResult.CONTINUE;
-            }
-        });
+        Files.walk(watchPath)
+                .filter(element -> Files.isDirectory(element))
+                .forEach(dir ->
+                {
+                    try
+                    {
+                        watchKeys.add(dir.register(watchService,
+                                StandardWatchEventKinds.ENTRY_CREATE,
+                                StandardWatchEventKinds.ENTRY_DELETE,
+                                StandardWatchEventKinds.ENTRY_MODIFY));
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                });
     }
 
+    @SneakyThrows
     @Override
     public void run()
     {
         while (true)
         {
-            synchronized (this)
+            WatchKey watchKey;
+            while ((watchKey = watchService.take()) != null)
             {
-                WatchKey watchKey;
-                while ((watchKey = watchService.poll()) != null)
+                try
                 {
                     final Path directoryPath = (Path) watchKey.watchable();
                     for (final WatchEvent<?> event : watchKey.pollEvents())
                     {
                         if (event.kind().equals(StandardWatchEventKinds.OVERFLOW)) return;
                         final Path absoluteLocalFilePath = directoryPath.resolve(((WatchEvent<Path>) event).context());
-                        final Path relativeLocalFilePath = watchPath.relativize(absoluteLocalFilePath);
+
+                        final Consumer<Path> directoryCreatedNotifier = (dir) ->
+                        {
+                            directoryCreatedBus.fireAsync(new EDirectoryCreated(dir.toString(),
+                                    watchPath.relativize(dir).toString(),
+                                    watchPath.toString()));
+                        };
+
+                        final Consumer<Path> fileCreatedNotifier = (file) ->
+                        {
+                            fileCreatedBus.fireAsync(new EFileCreated(file.toString(),
+                                    watchPath.relativize(file).toString(),
+                                    watchPath.toString()));
+                        };
 
                         if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE))
                         {
@@ -86,36 +108,28 @@ public class DirectoryWatcher implements Runnable
                             {
                                 try
                                 {
-                                    Files.walkFileTree(absoluteLocalFilePath, new SimpleFileVisitor<Path>()
-                                    {
-                                        @Override
-                                        public FileVisitResult preVisitDirectory(final Path dir,
-                                                                                 final BasicFileAttributes attrs) throws IOException
-                                        {
-                                            watchKeys.add(dir.register(watchService,
-                                                    StandardWatchEventKinds.ENTRY_CREATE,
-                                                    StandardWatchEventKinds.ENTRY_DELETE,
-                                                    StandardWatchEventKinds.ENTRY_MODIFY));
-                                            final EDirectoryCreated directoryCreatedEvent = new EDirectoryCreated();
-                                            directoryCreatedEvent.setLocalAbsolutePath(dir.toString());
-                                            directoryCreatedEvent.setLocalRelativePath(watchPath.relativize(dir).toString());
-                                            directoryCreatedEvent.setLocalRoot(watchPath.toString());
-                                            directoryCreatedBus.fireAsync(directoryCreatedEvent);
-                                            return FileVisitResult.CONTINUE;
-                                        }
+                                    Files.walk(absoluteLocalFilePath)
+                                            .sorted(Comparator.naturalOrder())
+                                            .filter(element -> Files.isDirectory(element))
+                                            .forEach(dir ->
+                                            {
+                                                try
+                                                {
+                                                    watchKeys.add(dir.register(watchService,
+                                                            StandardWatchEventKinds.ENTRY_CREATE,
+                                                            StandardWatchEventKinds.ENTRY_DELETE,
+                                                            StandardWatchEventKinds.ENTRY_MODIFY));
+                                                    directoryCreatedNotifier.accept(dir);
+                                                }
+                                                catch (IOException e)
+                                                {
+                                                    e.printStackTrace();
+                                                }
+                                            });
 
-                                        @Override
-                                        public FileVisitResult visitFile(final Path file,
-                                                                         final BasicFileAttributes attrs) throws IOException
-                                        {
-                                            final EFileCreated fileCreatedEvent = new EFileCreated();
-                                            fileCreatedEvent.setLocalAbsolutePath(file.toString());
-                                            fileCreatedEvent.setLocalRelativePath(watchPath.relativize(file).toString());
-                                            fileCreatedEvent.setLocalRoot(watchPath.toString());
-                                            fileCreatedBus.fireAsync(fileCreatedEvent);
-                                            return FileVisitResult.CONTINUE;
-                                        }
-                                    });
+                                    Files.walk(absoluteLocalFilePath)
+                                            .filter(element -> !Files.isDirectory(element))
+                                            .forEach(fileCreatedNotifier);
                                 }
                                 catch (IOException e)
                                 {
@@ -124,32 +138,38 @@ public class DirectoryWatcher implements Runnable
                             }
                             else
                             {
-                                final EFileCreated fileCreatedEvent = new EFileCreated();
-                                fileCreatedEvent.setLocalAbsolutePath(absoluteLocalFilePath.toString());
-                                fileCreatedEvent.setLocalRelativePath(relativeLocalFilePath.toString());
-                                fileCreatedEvent.setLocalRoot(watchPath.toString());
-                                fileCreatedBus.fireAsync(fileCreatedEvent);
+                                fileCreatedNotifier.accept(absoluteLocalFilePath);
                             }
                         }
                         else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE))
                         {
+                            if(Files.isDirectory(absoluteLocalFilePath))
+                                watchKeys.removeIf(key -> key.watchable().equals(absoluteLocalFilePath));
 
+                            itemDeletedBus.fireAsync(new EFilesystemItemDeleted(
+                                    absoluteLocalFilePath.toString(),
+                                    watchPath.relativize(absoluteLocalFilePath).toString(),
+                                    watchPath.toString()));
                         }
                         else if (event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY))
                         {
-
+                            if (!Files.isDirectory(absoluteLocalFilePath))
+                            {
+                                final Long oldTimestamp = timestampMap.get(absoluteLocalFilePath);
+                                final Long newTimestamp = absoluteLocalFilePath.toFile().lastModified();
+                                if(!newTimestamp.equals(oldTimestamp))
+                                {
+                                    timestampMap.put(absoluteLocalFilePath, newTimestamp);
+                                    fileCreatedNotifier.accept(absoluteLocalFilePath);
+                                }
+                            }
                         }
                     }
                 }
-            }
-
-            try
-            {
-                Thread.sleep(QUANTUM);
-            }
-            catch (InterruptedException e)
-            {
-                break;
+                finally
+                {
+                    watchKey.reset();
+                }
             }
         }
     }

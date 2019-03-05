@@ -9,11 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class EFilesystemEvent
+public class EFileTransferProgress
 {
-    private String localAbsolutePath;
+    private int percentComplete;
 
-    private String localRelativePath;
-
-    private String localRoot;
+    private String fileName;
 }

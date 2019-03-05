@@ -30,5 +30,11 @@ public abstract class NioFile implements IFile
         byteChannel.close();
     }
 
+    @Override
+    public long getSize() throws IOException
+    {
+        return Files.size(filePath);
+    }
+
     protected abstract Set<StandardOpenOption> getOpenOptions();
 }

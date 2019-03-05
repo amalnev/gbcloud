@@ -4,6 +4,9 @@ import ru.malnev.gbcloud.common.utils.Util;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Keyword(Const.HELP_COMMAND_KEYWORD)
 @Description(Const.HELP_COMMAND_DESCRIPTION)
@@ -17,7 +20,18 @@ public class HelpCommand extends AbstractCommand
         final StringBuilder builder = new StringBuilder();
         builder.append("Supported commands are: ");
         builder.append(System.getProperty("line.separator"));
-        CDI.current().select(COMMAND_ANNOTATION).forEach(commandBean ->
+
+        final List<Object> supportedCommands = CDI.current().select(COMMAND_ANNOTATION).stream().collect(toList());
+        supportedCommands.stream().sorted((thisCommandBean, otherCommandBean) ->
+        {
+            final Util.AnnotatedClass thisAnnotatedWithImportance = Util.getAnnotation(Importance.class, thisCommandBean.getClass());
+            final Util.AnnotatedClass otherAnnotatedWithImportance = Util.getAnnotation(Importance.class, otherCommandBean.getClass());
+
+            final int thisImportance = thisAnnotatedWithImportance == null ? 0 : ((Importance) thisAnnotatedWithImportance.getAnnotation()).value();
+            final int otherImportance = otherAnnotatedWithImportance == null ? 0 : ((Importance) otherAnnotatedWithImportance.getAnnotation()).value();
+
+            return otherImportance - thisImportance;
+        }).forEach(commandBean ->
         {
             final Util.AnnotatedClass annotatedWithKeyword = Util.getAnnotation(Keyword.class, commandBean.getClass());
             final Util.AnnotatedClass annotatedWithDescription = Util.getAnnotation(Description.class, commandBean.getClass());

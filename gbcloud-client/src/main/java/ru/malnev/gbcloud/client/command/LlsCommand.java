@@ -17,25 +17,21 @@ public class LlsCommand extends AbstractCommand
     @SneakyThrows
     public void run()
     {
-        Files.newDirectoryStream(cli.getCurrentDirectory()).forEach(element ->
-        {
-            try
-            {
-                final StringBuilder builder = new StringBuilder();
-                if (Files.isDirectory(element))
+        Files.list(cli.getCurrentDirectory())
+                .filter(element -> Files.isDirectory(element))
+                .forEach(directory -> System.out.println("<DIR>\t\t\t\t\t" + directory.getName(directory.getNameCount() - 1)));
+        Files.list(cli.getCurrentDirectory())
+                .filter(element -> !Files.isDirectory(element))
+                .forEach(file ->
                 {
-                    builder.append("<DIR>\t\t");
-                }
-                else
-                {
-                    builder.append("\t\t");
-                    builder.append(Files.size(element));
-                    builder.append("\t");
-                }
-                builder.append(element.getName(element.getNameCount() - 1).toString());
-                System.out.println(builder.toString());
-            }
-            catch (IOException e) {}
-        });
+                    try
+                    {
+                        System.out.println("\t\t" + Files.size(file) + "\t\t\t" + file.getFileName());
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                });
     }
 }

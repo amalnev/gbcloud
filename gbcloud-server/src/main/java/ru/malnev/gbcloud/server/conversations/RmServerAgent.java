@@ -7,9 +7,11 @@ import ru.malnev.gbcloud.common.messages.ServerErrorResponse;
 import ru.malnev.gbcloud.common.messages.ServerOkResponse;
 import ru.malnev.gbcloud.common.messages.rm.RmRequest;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 
 @RespondsTo(RmRequest.class)
 public class RmServerAgent extends ServerAgent
@@ -17,12 +19,21 @@ public class RmServerAgent extends ServerAgent
     @Override
     public void processMessageFromPeer(@NotNull IMessage message)
     {
-        //TODO: добавить возможность удалять директории рекурсивно
         final RmRequest request = (RmRequest) message;
         final Path pathToRemove = getCurrentDirectory().resolve(request.getTargetPath());
         try
         {
-            Files.delete(pathToRemove);
+            if(Files.isDirectory(pathToRemove))
+            {
+                Files.walk(pathToRemove)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
+            else
+            {
+                Files.delete(pathToRemove);
+            }
         }
         catch (IOException e)
         {

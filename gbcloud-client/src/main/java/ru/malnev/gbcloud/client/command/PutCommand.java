@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Importance(3)
 @Keyword(Const.PUT_COMMAND_KEYWORD)
 @Description(Const.PUT_COMMAND_DESCRIPTION)
 @Arguments(Const.TARGET_FILE_ARGUMENT_NAME)

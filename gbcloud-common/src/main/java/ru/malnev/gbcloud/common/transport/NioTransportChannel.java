@@ -23,7 +23,7 @@ public class NioTransportChannel implements ITransportChannel
 
     private static final int MAGIC = 114576;
 
-    private static final int READ_BUFFER_CAPACITY = 10 * 1024 * 1024;
+    private static final int READ_BUFFER_CAPACITY = 1024 * 1024;
 
     private static final int HEADER_SIZE = 8;
 
@@ -227,8 +227,8 @@ public class NioTransportChannel implements ITransportChannel
     @Override
     public int getMTU()
     {
-        return 10240;
-        //return (int) (0.75f * MAXIMUM_OBJECT_SIZE);
+        //return 10240;
+        return (int) (0.5f * MAXIMUM_OBJECT_SIZE);
     }
 
     @Override

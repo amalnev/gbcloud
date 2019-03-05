@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import static ru.malnev.gbcloud.client.command.Const.*;
 
+@Importance(6)
 @Keyword(Const.OPEN_COMMAND_KEYWORD)
 @Description(Const.OPEN_COMMAND_DESCRIPTION)
 @Arguments({SERVER_ARGUMENT_NAME, LOGIN_ARGUMENT_NAME, PASSWORD_ARGUMENT_NAME})

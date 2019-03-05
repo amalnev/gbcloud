@@ -3,7 +3,9 @@ package ru.malnev.gbcloud.common.conversations;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import ru.malnev.gbcloud.common.events.EFileTransferComplete;
 import ru.malnev.gbcloud.common.events.EFileTransferFailed;
+import ru.malnev.gbcloud.common.events.EFileTransferProgress;
 import ru.malnev.gbcloud.common.filesystem.IFileReader;
 import ru.malnev.gbcloud.common.messages.IMessage;
 import ru.malnev.gbcloud.common.messages.transfer.FileDataAcceptedResponse;
@@ -28,8 +30,18 @@ public class FileTransferSendingAgent
 
     private int cseq;
 
+    private int mtu;
+
+    private long fileSize;
+
     @Inject
     private Event<EFileTransferFailed> fileTransferFailedBus;
+
+    @Inject
+    private Event<EFileTransferProgress> fileTransferProgressBus;
+
+    @Inject
+    private Event<EFileTransferComplete> fileTransferCompleteBus;
 
     private IConversation conversation;
 
@@ -39,7 +51,10 @@ public class FileTransferSendingAgent
         this.filePath = filePath;
         this.conversation = conversation;
         lastCseq = 0;
+        cseq = 0;
         fileReader.open(filePath);
+        mtu = conversation.getConversationManager().getTransportChannel().getMTU();
+        fileSize = fileReader.getSize();
     }
 
     public void stop()
@@ -56,10 +71,12 @@ public class FileTransferSendingAgent
 
     public void sendNextDataRequest() throws IOException
     {
-        final int mtu = conversation.getConversationManager().getTransportChannel().getMTU();
         final byte[] bytesRead = fileReader.read(mtu);
         final boolean lastPackage = bytesRead.length < mtu;
-        final FileDataRequest dataRequest = new FileDataRequest(bytesRead, bytesRead.length < mtu, ++cseq);
+        cseq++;
+        long maxCseq = fileSize / mtu;
+        int percentComplete = (maxCseq != 0 ) ? 100 * cseq / (int) maxCseq : 100;
+        final FileDataRequest dataRequest = new FileDataRequest(bytesRead, bytesRead.length < mtu, ++cseq, percentComplete);
         conversation.sendMessageToPeer(dataRequest);
         if (lastPackage) lastCseq = cseq;
         conversation.continueConversation();
@@ -83,8 +100,16 @@ public class FileTransferSendingAgent
             {
                 final FileDataAcceptedResponse response = (FileDataAcceptedResponse) message;
 
+                long maxCseq = fileSize / mtu;
+                int percentComplete = (maxCseq != 0 ) ? 100 * response.getCseq() / (int) maxCseq : 100;
+                fileTransferProgressBus.fireAsync(new EFileTransferProgress(percentComplete, filePath.getFileName().toString()));
+
                 //если получено подтверждение о получении последнего пакета - завершаем
-                if (response.getCseq() == lastCseq) return;
+                if (response.getCseq() == lastCseq)
+                {
+                    fileTransferCompleteBus.fireAsync(new EFileTransferComplete(filePath.getFileName().toString()));
+                    return;
+                }
             }
 
             sendNextDataRequest();

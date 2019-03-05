@@ -95,9 +95,6 @@ public abstract class AbstractConversation implements IConversation
     @SneakyThrows
     public synchronized void init()
     {
-        //TODO: добавить верификацию this бина на корректность использования аннотаций @ActiveAgent,
-        //@PassiveAgent, @StartsWith, @RespondsTo.
-
         final Util.AnnotatedClass annotatedWithExpects = Util.getAnnotation(Expects.class, getClass());
         final Util.AnnotatedClass annotatedWithPassiveAgent = Util.getAnnotation(ActiveAgent.class, getClass());
         final Util.AnnotatedClass annotatedWithActiveAgent = Util.getAnnotation(ActiveAgent.class, getClass());

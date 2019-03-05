@@ -6,6 +6,7 @@ import ru.malnev.gbcloud.common.conversations.ActiveAgent;
 
 import javax.inject.Inject;
 
+@Importance(2)
 @Keyword(Const.RMKDIR_COMMAND_KEYWORD)
 @Description(Const.RMKDIR_COMMAND_DESCRIPTION)
 @Arguments(Const.TARGET_DIRECTORY_ARGUMENT_NAME)

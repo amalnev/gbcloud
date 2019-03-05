@@ -7,13 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public abstract class EFilesystemEvent
+@AllArgsConstructor
+public class EFileTransferComplete
 {
-    private String localAbsolutePath;
-
-    private String localRelativePath;
-
-    private String localRoot;
+    private String fileName;
 }
