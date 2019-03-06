@@ -27,14 +27,14 @@ public class HFileTransferProgress
                 (event.getPercentComplete() >= 50 && event.getPercentComplete() < 75 && lastReported < 50) ||
                 (event.getPercentComplete() >= 75 && lastReported < 75);
 
-        if(needsReporting)
+        if (needsReporting)
         {
             lastReported = event.getPercentComplete();
-            if(lastReported >= 25 && lastReported < 50)
+            if (lastReported >= 25 && lastReported < 50)
                 lastReported = 25;
-            else if(lastReported >= 50 && lastReported < 75)
+            else if (lastReported >= 50 && lastReported < 75)
                 lastReported = 50;
-            else if(lastReported >= 75)
+            else if (lastReported >= 75)
                 lastReported = 75;
 
             lastReportedMap.put(event.getFileName(), lastReported);

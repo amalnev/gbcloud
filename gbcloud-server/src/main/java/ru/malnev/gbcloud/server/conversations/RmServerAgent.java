@@ -23,7 +23,7 @@ public class RmServerAgent extends ServerAgent
         final Path pathToRemove = getCurrentDirectory().resolve(request.getTargetPath());
         try
         {
-            if(Files.isDirectory(pathToRemove))
+            if (Files.isDirectory(pathToRemove))
             {
                 Files.walk(pathToRemove)
                         .sorted(Comparator.reverseOrder())

@@ -12,7 +12,6 @@ import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import java.nio.file.Paths;
 
 @ApplicationScoped
 @Interceptors(ClientLogger.class)

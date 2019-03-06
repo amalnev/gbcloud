@@ -75,7 +75,7 @@ public class FileTransferSendingAgent
         final boolean lastPackage = bytesRead.length < mtu;
         cseq++;
         long maxCseq = fileSize / mtu;
-        int percentComplete = (maxCseq != 0 ) ? 100 * cseq / (int) maxCseq : 100;
+        int percentComplete = (maxCseq != 0) ? 100 * cseq / (int) maxCseq : 100;
         final FileDataRequest dataRequest = new FileDataRequest(bytesRead, bytesRead.length < mtu, ++cseq, percentComplete);
         conversation.sendMessageToPeer(dataRequest);
         if (lastPackage) lastCseq = cseq;
@@ -101,7 +101,7 @@ public class FileTransferSendingAgent
                 final FileDataAcceptedResponse response = (FileDataAcceptedResponse) message;
 
                 long maxCseq = fileSize / mtu;
-                int percentComplete = (maxCseq != 0 ) ? 100 * response.getCseq() / (int) maxCseq : 100;
+                int percentComplete = (maxCseq != 0) ? 100 * response.getCseq() / (int) maxCseq : 100;
                 fileTransferProgressBus.fireAsync(new EFileTransferProgress(percentComplete, filePath.getFileName().toString()));
 
                 //если получено подтверждение о получении последнего пакета - завершаем

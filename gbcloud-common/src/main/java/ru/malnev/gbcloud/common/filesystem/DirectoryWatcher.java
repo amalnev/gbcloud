@@ -10,9 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.io.IOException;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -143,7 +141,7 @@ public class DirectoryWatcher implements Runnable
                         }
                         else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE))
                         {
-                            if(Files.isDirectory(absoluteLocalFilePath))
+                            if (Files.isDirectory(absoluteLocalFilePath))
                                 watchKeys.removeIf(key -> key.watchable().equals(absoluteLocalFilePath));
 
                             itemDeletedBus.fireAsync(new EFilesystemItemDeleted(
@@ -157,7 +155,7 @@ public class DirectoryWatcher implements Runnable
                             {
                                 final Long oldTimestamp = timestampMap.get(absoluteLocalFilePath);
                                 final Long newTimestamp = absoluteLocalFilePath.toFile().lastModified();
-                                if(!newTimestamp.equals(oldTimestamp))
+                                if (!newTimestamp.equals(oldTimestamp))
                                 {
                                     timestampMap.put(absoluteLocalFilePath, newTimestamp);
                                     fileCreatedNotifier.accept(absoluteLocalFilePath);
