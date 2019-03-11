@@ -150,6 +150,8 @@ public class NioTransportChannel implements ITransportChannel
                 try
                 {
                     magic = readBuffer.getInt();
+                    if(magic != MAGIC)
+                        readBuffer.position(readBuffer.position() - 3);
                 }
                 catch (Exception e)
                 {
