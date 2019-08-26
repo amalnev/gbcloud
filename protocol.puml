@@ -1,0 +1,56 @@
+@startuml
+autonumber
+
+note over Client, Server: Клиент аутентифицируется на сервере
+
+Client -> Server : Authentication Request
+note left: AuthMessage
+
+alt authentication success
+    Server -> Client: Authentication success
+    note right: AuthSuccessResponse
+
+    note over Server, Client: Клиент выполняет листинг файлов на сервере
+
+    group ls
+        Client -> Server: Request the list of remote files
+        note left: LsRequest
+
+        Server -> Client: Serve the list of files
+        note right: LsResponse
+    end
+
+    note over Server, Client: Клиент скачивает с сервера определенный файл
+
+    group get
+        Client -> Server: Request a remote file
+        note left: GetRequest
+
+        == Repetition (data transfer) ==
+            note over Server, Client: Файлы при передаче разбиваются на фрагменты фиксированного размера \n Передача продолжается, пока не будут переданы все фрагменты.
+
+            Server -> Client: Send data chunk
+            note right: FileDataRequest
+
+            note over Server, Client: Клиент подтверждает получение каждого фрагмента или сообщает об ошибке
+
+            alt data transfer success
+                Client -> Server: data acceptance confirmation
+                note left: FileDataAcceptedResponse
+            else data transfer failure
+                note over Server, Client: В случае ошибки передача останавливается
+
+                Client -> Server: data was not received properly
+                note left: FileTransferError
+            end
+        == Data transfer end ==
+    end
+
+else authentication failure
+    note over Server, Client: Сбой аутентификации, клиент завершает работу
+
+    Server -> Client: Authentication failure
+    note right: AuthFailResponse
+end
+
+@enduml
