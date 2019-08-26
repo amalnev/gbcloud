@@ -1,0 +1,65 @@
+@startuml
+autonumber
+
+note over Client, Server #aqua: Клиент аутентифицируется на сервере
+
+Client -> Server : Authentication Request
+note left: AuthMessage
+
+alt authentication success
+    Server -> Client: Authentication success
+    note right: AuthSuccessResponse
+
+    note over Server, Client #aqua
+        Клиент выполняет листинг файлов на сервере
+    end note
+
+    group ls
+        Client -> Server: Request the list of remote files
+        note left: LsRequest
+
+        Server -> Client: Serve the list of files
+        note right: LsResponse
+    end
+
+    note over Server, Client #aqua
+        Клиент скачивает с сервера определенный файл
+    end note
+
+    group get
+        Client -> Server: Request a remote file
+        note left: GetRequest
+
+        == Repetition (data transfer) ==
+            note over Server, Client #aqua
+                Файлы при передаче разбиваются на фрагменты фиксированного размера \n
+                Передача продолжается, пока не будут переданы все фрагменты.
+            end note
+
+            Server -> Client: Send data chunk
+            note right: FileDataRequest
+
+            note over Server, Client #aqua
+                Клиент подтверждает получение каждого фрагмента или сообщает об ошибке
+            end note
+
+            alt data transfer success
+                Client -> Server: data acceptance confirmation
+                note left: FileDataAcceptedResponse
+            else data transfer failure
+                note over Server, Client #aqua: В случае ошибки передача останавливается
+
+                Client -> Server: data was not received properly
+                note left: FileTransferError
+            end
+        == Data transfer end ==
+    end
+
+else authentication failure
+    note over Server, Client #aqua: Сбой аутентификации, клиент завершает работу
+
+    Server -> Client: Authentication failure
+    note right: AuthFailResponse
+end
+
+@enduml
